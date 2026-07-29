@@ -161,7 +161,7 @@ function AuthorPage() {
                     </span>
                     <ChevronDown className="mt-1.5 h-4 w-4 shrink-0 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
                   </CollapsibleTrigger>
-                  <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                  <CollapsibleContent>
                     <div className="flex gap-4 pt-1 pb-6">
                       <Quote className="h-5 w-5 shrink-0 text-primary/40" />
                       <p className="leading-[1.75] text-muted-foreground">{item.a}</p>
