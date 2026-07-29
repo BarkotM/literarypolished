@@ -184,7 +184,7 @@ function Index() {
                 key={author.id}
                 to="/authors/$authorId"
                 params={{ authorId: author.id }}
-                search={titleHit && q ? { highlight: matchedBooks[0]?.id } : undefined}
+                search={titleHit && q && matchedBooks[0] ? { highlight: matchedBooks[0].id } : {}}
                 className="group block"
               >
                 <div className="flex items-start gap-5">

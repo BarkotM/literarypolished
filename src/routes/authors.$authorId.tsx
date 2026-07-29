@@ -16,9 +16,8 @@ import { authors, eras, getAuthor } from "@/data/catalog";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/authors/$authorId")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    highlight: typeof search.highlight === "string" ? search.highlight : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): { highlight?: string } =>
+    typeof search.highlight === "string" ? { highlight: search.highlight } : {},
   loader: ({ params }): { author: Author } => {
     const author = getAuthor(params.authorId);
     if (!author) throw notFound();
