@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BooksBookIdRouteImport } from './routes/books.$bookId'
 import { Route as AuthorsAuthorIdRouteImport } from './routes/authors.$authorId'
@@ -19,6 +20,11 @@ import { Route as AuthAgentRouteImport } from './routes/auth.agent'
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -49,6 +55,7 @@ const AuthAgentRoute = AuthAgentRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/auth/agent': typeof AuthAgentRoute
   '/auth/author': typeof AuthAuthorRoute
@@ -57,6 +64,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/auth/agent': typeof AuthAgentRoute
   '/auth/author': typeof AuthAuthorRoute
@@ -66,6 +74,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/auth/agent': typeof AuthAgentRoute
   '/auth/author': typeof AuthAuthorRoute
@@ -76,6 +85,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account'
     | '/sitemap.xml'
     | '/auth/agent'
     | '/auth/author'
@@ -84,6 +94,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account'
     | '/sitemap.xml'
     | '/auth/agent'
     | '/auth/author'
@@ -92,6 +103,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/account'
     | '/sitemap.xml'
     | '/auth/agent'
     | '/auth/author'
@@ -101,6 +113,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountRoute: typeof AccountRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AuthAgentRoute: typeof AuthAgentRoute
   AuthAuthorRoute: typeof AuthAuthorRoute
@@ -115,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -157,6 +177,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountRoute: AccountRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   AuthAgentRoute: AuthAgentRoute,
   AuthAuthorRoute: AuthAuthorRoute,
