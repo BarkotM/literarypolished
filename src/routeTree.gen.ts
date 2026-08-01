@@ -13,6 +13,8 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BooksBookIdRouteImport } from './routes/books.$bookId'
 import { Route as AuthorsAuthorIdRouteImport } from './routes/authors.$authorId'
+import { Route as AuthAuthorRouteImport } from './routes/auth.author'
+import { Route as AuthAgentRouteImport } from './routes/auth.agent'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -34,16 +36,30 @@ const AuthorsAuthorIdRoute = AuthorsAuthorIdRouteImport.update({
   path: '/authors/$authorId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthAuthorRoute = AuthAuthorRouteImport.update({
+  id: '/auth/author',
+  path: '/auth/author',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthAgentRoute = AuthAgentRouteImport.update({
+  id: '/auth/agent',
+  path: '/auth/agent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/auth/agent': typeof AuthAgentRoute
+  '/auth/author': typeof AuthAuthorRoute
   '/authors/$authorId': typeof AuthorsAuthorIdRoute
   '/books/$bookId': typeof BooksBookIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/auth/agent': typeof AuthAgentRoute
+  '/auth/author': typeof AuthAuthorRoute
   '/authors/$authorId': typeof AuthorsAuthorIdRoute
   '/books/$bookId': typeof BooksBookIdRoute
 }
@@ -51,18 +67,34 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/auth/agent': typeof AuthAgentRoute
+  '/auth/author': typeof AuthAuthorRoute
   '/authors/$authorId': typeof AuthorsAuthorIdRoute
   '/books/$bookId': typeof BooksBookIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sitemap.xml' | '/authors/$authorId' | '/books/$bookId'
+  fullPaths:
+    | '/'
+    | '/sitemap.xml'
+    | '/auth/agent'
+    | '/auth/author'
+    | '/authors/$authorId'
+    | '/books/$bookId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sitemap.xml' | '/authors/$authorId' | '/books/$bookId'
+  to:
+    | '/'
+    | '/sitemap.xml'
+    | '/auth/agent'
+    | '/auth/author'
+    | '/authors/$authorId'
+    | '/books/$bookId'
   id:
     | '__root__'
     | '/'
     | '/sitemap.xml'
+    | '/auth/agent'
+    | '/auth/author'
     | '/authors/$authorId'
     | '/books/$bookId'
   fileRoutesById: FileRoutesById
@@ -70,6 +102,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  AuthAgentRoute: typeof AuthAgentRoute
+  AuthAuthorRoute: typeof AuthAuthorRoute
   AuthorsAuthorIdRoute: typeof AuthorsAuthorIdRoute
   BooksBookIdRoute: typeof BooksBookIdRoute
 }
@@ -104,12 +138,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthorsAuthorIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/author': {
+      id: '/auth/author'
+      path: '/auth/author'
+      fullPath: '/auth/author'
+      preLoaderRoute: typeof AuthAuthorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/agent': {
+      id: '/auth/agent'
+      path: '/auth/agent'
+      fullPath: '/auth/agent'
+      preLoaderRoute: typeof AuthAgentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  AuthAgentRoute: AuthAgentRoute,
+  AuthAuthorRoute: AuthAuthorRoute,
   AuthorsAuthorIdRoute: AuthorsAuthorIdRoute,
   BooksBookIdRoute: BooksBookIdRoute,
 }
