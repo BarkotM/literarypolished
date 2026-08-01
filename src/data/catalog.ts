@@ -324,3 +324,5 @@ export function getAuthor(id: string) {
 export function getBook(id: string) {
   return allBooks.find((b) => b.id === id);
 }
+
+export const eras = ["All eras", "Pre-1900", "1900–1959", "1960–1989", "1990–Present"];
