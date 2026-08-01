@@ -10,13 +10,33 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RightsRouteImport } from './routes/rights'
+import { Route as AgentRouteImport } from './routes/agent'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BooksBookIdRouteImport } from './routes/books.$bookId'
 import { Route as AuthorsAuthorIdRouteImport } from './routes/authors.$authorId'
+import { Route as AuthAuthorRouteImport } from './routes/auth.author'
+import { Route as AuthAgentRouteImport } from './routes/auth.agent'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RightsRoute = RightsRouteImport.update({
+  id: '/rights',
+  path: '/rights',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgentRoute = AgentRouteImport.update({
+  id: '/agent',
+  path: '/agent',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -34,42 +54,95 @@ const AuthorsAuthorIdRoute = AuthorsAuthorIdRouteImport.update({
   path: '/authors/$authorId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthAuthorRoute = AuthAuthorRouteImport.update({
+  id: '/auth/author',
+  path: '/auth/author',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthAgentRoute = AuthAgentRouteImport.update({
+  id: '/auth/agent',
+  path: '/auth/agent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/agent': typeof AgentRoute
+  '/rights': typeof RightsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/auth/agent': typeof AuthAgentRoute
+  '/auth/author': typeof AuthAuthorRoute
   '/authors/$authorId': typeof AuthorsAuthorIdRoute
   '/books/$bookId': typeof BooksBookIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/agent': typeof AgentRoute
+  '/rights': typeof RightsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/auth/agent': typeof AuthAgentRoute
+  '/auth/author': typeof AuthAuthorRoute
   '/authors/$authorId': typeof AuthorsAuthorIdRoute
   '/books/$bookId': typeof BooksBookIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/agent': typeof AgentRoute
+  '/rights': typeof RightsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/auth/agent': typeof AuthAgentRoute
+  '/auth/author': typeof AuthAuthorRoute
   '/authors/$authorId': typeof AuthorsAuthorIdRoute
   '/books/$bookId': typeof BooksBookIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sitemap.xml' | '/authors/$authorId' | '/books/$bookId'
+  fullPaths:
+    | '/'
+    | '/account'
+    | '/agent'
+    | '/rights'
+    | '/sitemap.xml'
+    | '/auth/agent'
+    | '/auth/author'
+    | '/authors/$authorId'
+    | '/books/$bookId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sitemap.xml' | '/authors/$authorId' | '/books/$bookId'
+  to:
+    | '/'
+    | '/account'
+    | '/agent'
+    | '/rights'
+    | '/sitemap.xml'
+    | '/auth/agent'
+    | '/auth/author'
+    | '/authors/$authorId'
+    | '/books/$bookId'
   id:
     | '__root__'
     | '/'
+    | '/account'
+    | '/agent'
+    | '/rights'
     | '/sitemap.xml'
+    | '/auth/agent'
+    | '/auth/author'
     | '/authors/$authorId'
     | '/books/$bookId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountRoute: typeof AccountRoute
+  AgentRoute: typeof AgentRoute
+  RightsRoute: typeof RightsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  AuthAgentRoute: typeof AuthAgentRoute
+  AuthAuthorRoute: typeof AuthAuthorRoute
   AuthorsAuthorIdRoute: typeof AuthorsAuthorIdRoute
   BooksBookIdRoute: typeof BooksBookIdRoute
 }
@@ -81,6 +154,27 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rights': {
+      id: '/rights'
+      path: '/rights'
+      fullPath: '/rights'
+      preLoaderRoute: typeof RightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agent': {
+      id: '/agent'
+      path: '/agent'
+      fullPath: '/agent'
+      preLoaderRoute: typeof AgentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -104,25 +198,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthorsAuthorIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/author': {
+      id: '/auth/author'
+      path: '/auth/author'
+      fullPath: '/auth/author'
+      preLoaderRoute: typeof AuthAuthorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/agent': {
+      id: '/auth/agent'
+      path: '/auth/agent'
+      fullPath: '/auth/agent'
+      preLoaderRoute: typeof AuthAgentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountRoute: AccountRoute,
+  AgentRoute: AgentRoute,
+  RightsRoute: RightsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  AuthAgentRoute: AuthAgentRoute,
+  AuthAuthorRoute: AuthAuthorRoute,
   AuthorsAuthorIdRoute: AuthorsAuthorIdRoute,
   BooksBookIdRoute: BooksBookIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
