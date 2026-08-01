@@ -9,11 +9,11 @@ export function getSlug(text: string): string {
 }
 
 export function authorImage(name: string) {
-  return `/images/authors/${getSlug(name)}.jpg`;
+  return `/images/authors/${getSlug(name)}.png`;
 }
 
 export function coverImage(id: string) {
-  return `/images/covers/${getSlug(id)}.jpg`;
+  return `/images/covers/${getSlug(id)}.png`;
 }
 
 export function initials(name: string) {
