@@ -26,7 +26,7 @@ export const Route = createFileRoute("/rights")({
   component: RightsPage,
 });
 
-type Row = Record<string, unknown> & { id: string; status: string };
+type Row = Record<string, unknown> & { id: string; status?: string };
 
 function RightsPage() {
   const { profile, loading } = useAuth();
@@ -46,9 +46,9 @@ function RightsPage() {
       supabase.from("book_requests").select("*").order("created_at", { ascending: false }),
       supabase.from("collaboration_requests").select("*").order("created_at", { ascending: false }),
     ]);
-    setProfiles((p.data as Row[]) ?? []);
-    setBooks((b.data as Row[]) ?? []);
-    setCollabs((c.data as Row[]) ?? []);
+    setProfiles((p.data as unknown as Row[]) ?? []);
+    setBooks((b.data as unknown as Row[]) ?? []);
+    setCollabs((c.data as unknown as Row[]) ?? []);
   }, [isStaff]);
 
   useEffect(() => {
@@ -79,7 +79,7 @@ function RightsPage() {
       patch["contact_email"] = "rights@tsehaipublishers.com";
       patch["contact_phone"] = "+1 (323) 431-0090";
     }
-    const { error } = await supabase.from(table).update(patch).eq("id", id);
+    const { error } = await supabase.from(table).update(patch as never).eq("id", id);
     if (error) toast.error(error.message);
     else {
       toast.success("Status updated");
@@ -187,7 +187,7 @@ function RightsPage() {
                       {[b["genre"], b["language"], b["year"]].filter(Boolean).join(" · ")}
                     </p>
                   </div>
-                  <Badge className={`rounded-none ${statusTone(b.status)}`}>{statusLabel(b.status)}</Badge>
+                  <Badge className={`rounded-none ${statusTone(b.status ?? "")}`}>{statusLabel(b.status ?? "")}</Badge>
                 </div>
                 {b["synopsis"] ? <p className="mt-3 text-sm text-neutral-400">{String(b["synopsis"])}</p> : null}
                 <div className="mt-4 flex flex-wrap gap-2">
@@ -222,7 +222,7 @@ function RightsPage() {
                     <div className="font-display text-lg text-white">{String(c["book_title"])}</div>
                     <p className="eyebrow mt-1 text-neutral-500">{String(c["author_name"] ?? "")}</p>
                   </div>
-                  <Badge className={`rounded-none ${statusTone(c.status)}`}>{statusLabel(c.status)}</Badge>
+                  <Badge className={`rounded-none ${statusTone(c.status ?? "")}`}>{statusLabel(c.status ?? "")}</Badge>
                 </div>
                 {c["message"] ? <p className="mt-3 text-sm text-neutral-400">{String(c["message"])}</p> : null}
                 <div className="mt-4 flex flex-wrap gap-2">

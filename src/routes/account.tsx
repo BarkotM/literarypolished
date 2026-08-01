@@ -84,7 +84,7 @@ function AccountPage() {
     e.preventDefault();
     if (!user) return;
     setSaving(true);
-    const { error } = await supabase.from("profiles").update(form).eq("id", user.id);
+    const { error } = await supabase.from("profiles").update(form as never).eq("id", user.id);
     setSaving(false);
     if (error) toast.error(error.message);
     else {
