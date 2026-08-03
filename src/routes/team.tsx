@@ -58,7 +58,7 @@ function TeamTile({ member }: { member: Staff }) {
   const color = bookColor(seed);
   return (
     <div className="group/tile aspect-square w-full [perspective:1100px]">
-      <div className="flex h-full w-full items-center justify-center">
+      <div className="relative flex h-full w-full items-center justify-center">
         {/* scattering mini books */}
         {Array.from({ length: 20 }).map((_, i) => {
           const s = scatter(seed, i);
@@ -114,6 +114,39 @@ function TeamTile({ member }: { member: Staff }) {
         />
       </div>
     </div>
+  );
+}
+
+function TeamMember({ member }: { member: Staff }) {
+  const [revealed, setRevealed] = useState(false);
+  return (
+    <article onMouseEnter={() => setRevealed(true)} onFocus={() => setRevealed(true)}>
+      <TeamTile member={member} />
+      <h2 className="mt-6 font-display text-xl">{member.name}</h2>
+      <div className="eyebrow mt-1 text-muted-foreground">{member.title}</div>
+      <div
+        className={
+          "mt-3 flex items-center gap-4 text-sm transition-all duration-500 " +
+          (revealed ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-1 opacity-0")
+        }
+      >
+        <a
+          href={member.linkedin}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-primary"
+        >
+          <Linkedin className="h-4 w-4" /> LinkedIn
+        </a>
+        <a
+          href={`mailto:${member.contactEmail}`}
+          className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-primary"
+        >
+          <Mail className="h-4 w-4" /> Email
+        </a>
+      </div>
+      <p className="mt-1 text-[11px] text-muted-foreground/70">Placeholder contact details</p>
+    </article>
   );
 }
 
