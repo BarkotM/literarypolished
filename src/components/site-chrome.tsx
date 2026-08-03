@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { LogOut, ShoppingCart, UserRound } from "lucide-react";
+import { ChevronDown, LogOut, Search, ShoppingCart, UserRound } from "lucide-react";
 import { GetStarted } from "@/components/get-started";
 import { useAuth, signOut } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { authors } from "@/data/catalog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -92,23 +94,113 @@ export function SiteHeader() {
           <span className="eyebrow hidden text-muted-foreground sm:block">Bibliographic Portal</span>
         </Link>
         <nav className="hidden items-center gap-7 md:flex">
-          {[
-            ["Authors A–Z", "/#authors"],
-            ["Catalogue", "/#catalogue"],
-            ["Guidelines", "/#guidelines"],
-          ].map(([label, href]) => (
-            <a
-              key={label}
-              href={href}
-              className="eyebrow text-muted-foreground transition-colors hover:text-primary"
-            >
-              {label}
-            </a>
-          ))}
+          <a
+            href="/#authors"
+            className="eyebrow text-muted-foreground transition-colors hover:text-primary"
+          >
+            Authors A–Z
+          </a>
+          <CatalogueMenu />
+          <Link
+            to="/team"
+            className="eyebrow text-muted-foreground transition-colors hover:text-primary"
+          >
+            Meet the Team
+          </Link>
         </nav>
         <AccountArea />
       </div>
     </header>
+  );
+}
+
+function CatalogueMenu() {
+  const [open, setOpen] = useState(false);
+  const [q, setQ] = useState("");
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const show = () => {
+    if (timer.current) clearTimeout(timer.current);
+    setOpen(true);
+  };
+  const hide = () => {
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => setOpen(false), 220);
+  };
+
+  const results = useMemo(() => {
+    const s = q.trim().toLowerCase();
+    if (!s) return [];
+    const out: { id: string; title: string; author: string }[] = [];
+    for (const a of authors) {
+      for (const b of a.books) {
+        if (b.title.toLowerCase().includes(s) || a.name.toLowerCase().includes(s))
+          out.push({ id: b.id, title: b.title, author: a.name });
+      }
+    }
+    return out.slice(0, 6);
+  }, [q]);
+
+  return (
+    <div className="relative" onMouseEnter={show} onMouseLeave={hide}>
+      <a
+        href="/#catalogue"
+        className="eyebrow flex items-center gap-1 text-muted-foreground transition-colors hover:text-primary"
+      >
+        Catalogue <ChevronDown className="h-3 w-3" />
+      </a>
+      {open && (
+        <div className="absolute top-full left-1/2 z-50 w-[26rem] -translate-x-1/2 pt-4">
+          <div className="border border-neutral-200 bg-white p-4 shadow-xl">
+            <div className="relative">
+              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="Search titles and authors"
+                className="h-11 rounded-none pl-9"
+              />
+            </div>
+            <div className="mt-3 max-h-72 overflow-y-auto">
+              {q && results.length === 0 && (
+                <p className="px-1 py-3 text-sm text-muted-foreground">No matches.</p>
+              )}
+              {results.map((r) => (
+                <Link
+                  key={r.id}
+                  to="/books/$bookId"
+                  params={{ bookId: r.id }}
+                  onClick={() => setOpen(false)}
+                  className="block border-b border-neutral-100 py-2 last:border-0 hover:text-primary"
+                >
+                  <div className="font-display text-sm">{r.title}</div>
+                  <div className="text-xs text-muted-foreground">{r.author}</div>
+                </Link>
+              ))}
+              {!q && (
+                <ul className="space-y-2 text-sm">
+                  <li>
+                    <a href="/#catalogue" className="hover:text-primary">
+                      Browse the full catalogue
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/#authors" className="hover:text-primary">
+                      Authors A–Z
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/#guidelines" className="hover:text-primary">
+                      Submission guidelines
+                    </a>
+                  </li>
+                </ul>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
