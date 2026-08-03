@@ -214,7 +214,7 @@ function Index() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-neutral-200 text-left">
-                  {["Author", "Title", "Year", "Genre", "Language", "Availability"].map((h) => (
+                  {["Author", "Lifespan", "Titles", "Languages", "Genres"].map((h) => (
                     <th key={h} className="eyebrow px-4 py-3 text-muted-foreground">
                       {h}
                     </th>
@@ -222,34 +222,27 @@ function Index() {
                 </tr>
               </thead>
               <tbody>
-                {results.flatMap(({ author, matchedBooks }) =>
-                  (matchedBooks.length ? matchedBooks : author.books).map((b) => (
-                    <tr key={b.id} className="border-b border-neutral-100 last:border-0 hover:bg-secondary/60">
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        <Link
-                          to="/authors/$authorId"
-                          params={{ authorId: author.id }}
-                          className="font-medium hover:text-primary"
-                        >
-                          {author.name}
-                        </Link>
-                      </td>
-                      <td className="px-4 py-3">
-                        <Link
-                          to="/books/$bookId"
-                          params={{ bookId: b.id }}
-                          className="font-display hover:text-primary"
-                        >
-                          {b.title}
-                        </Link>
-                      </td>
-                      <td className="px-4 py-3 tabular-nums">{b.year}</td>
-                      <td className="px-4 py-3 text-muted-foreground">{b.genre}</td>
-                      <td className="px-4 py-3 text-muted-foreground">{b.originalLanguage}</td>
-                      <td className="px-4 py-3 text-muted-foreground">{b.availability}</td>
-                    </tr>
-                  )),
-                )}
+                {results.map(({ author }) => (
+                  <tr key={author.id} className="border-b border-neutral-100 last:border-0 hover:bg-secondary/60">
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <Link
+                        to="/authors/$authorId"
+                        params={{ authorId: author.id }}
+                        className="font-medium hover:text-primary"
+                      >
+                        {author.name}
+                      </Link>
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">{author.lifespan}</td>
+                    <td className="px-4 py-3 tabular-nums">{author.books.length}</td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {[...new Set(author.books.map((b) => b.originalLanguage))].join(", ")}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {[...new Set(author.books.map((b) => b.genre))].join(", ")}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
