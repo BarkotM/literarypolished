@@ -188,3 +188,13 @@
     box-shadow: 24px 24px 48px -18px rgb(0 0 0 / 0.35);
   }
 }
+
+/* Hide the Lovable preview badge */
+#lovable-badge,
+a[href*="lovable.dev/projects"],
+[data-lovable-badge],
+.lovable-badge {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
