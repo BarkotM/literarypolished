@@ -73,7 +73,7 @@ function TeamTile({ member }: { member: Staff }) {
               className="pointer-events-none absolute top-[62%] left-1/2 z-10 -translate-x-1/2 -translate-y-1/2"
             >
               <div
-                className="opacity-0 transition-all duration-700 ease-out group-hover/tile:opacity-100 group-hover/tile:[transform:translate3d(var(--tx),var(--ty),0)_rotate(var(--rot))]"
+                className="opacity-0 transition-all duration-700 ease-out group-hover/tile:opacity-100 [transform:translate3d(0,0,80px)] group-hover/tile:[transform:translate3d(var(--tx),var(--ty),80px)_rotate(var(--rot))]"
                 style={
                   {
                     "--tx": s.tx,
