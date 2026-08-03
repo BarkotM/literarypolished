@@ -48,7 +48,7 @@ function scatter(seed: string, i: number) {
 
 function MiniBook({ color }: { color: string }) {
   return (
-    <div className="relative h-[9px] w-[13px] [transform:rotateX(52deg)_rotateZ(-28deg)]" style={{ background: color }}>
+    <div className="relative h-[11px] w-[16px] [transform:rotateX(52deg)_rotateZ(-28deg)]" style={{ background: color }}>
       <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.35),rgba(0,0,0,0.15))]" />
       <div
         className="absolute bottom-0 left-0 h-[3px] w-full origin-bottom [transform:rotateX(-90deg)]"
