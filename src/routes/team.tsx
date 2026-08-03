@@ -28,15 +28,20 @@ export const Route = createFileRoute("/team")({
 });
 
 function scatter(seed: string, i: number) {
-  let n = 0;
-  for (const ch of seed + i) n = (n * 37 + ch.charCodeAt(0)) % 997;
-  const angle = ((n % 360) / 360) * Math.PI * 2;
-  const dist = 96 + (n % 90);
+  let h = 2166136261;
+  for (const ch of seed) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
+  let n = Math.imul(h ^ (i + 1), 2654435761) >>> 0;
+  const rnd = () => {
+    n = (Math.imul(n, 1664525) + 1013904223) >>> 0;
+    return n / 4294967296;
+  };
+  const angle = rnd() * Math.PI * 2;
+  const dist = 90 + rnd() * 100;
   return {
     tx: `${Math.round(Math.cos(angle) * dist * 1.35)}px`,
     ty: `${Math.round(Math.sin(angle) * dist * 0.6)}px`,
-    rot: `${(n % 90) - 45}deg`,
-    delay: `${(n % 12) * 18}ms`,
+    rot: `${Math.round(rnd() * 90 - 45)}deg`,
+    delay: `${Math.round(rnd() * 200)}ms`,
     color: bookColor(seed + i),
   };
 }
