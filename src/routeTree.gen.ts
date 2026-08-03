@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TeamRouteImport } from './routes/team'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RightsRouteImport } from './routes/rights'
 import { Route as AgentRouteImport } from './routes/agent'
@@ -19,6 +20,11 @@ import { Route as AuthorsAuthorIdRouteImport } from './routes/authors.$authorId'
 import { Route as AuthAuthorRouteImport } from './routes/auth.author'
 import { Route as AuthAgentRouteImport } from './routes/auth.agent'
 
+const TeamRoute = TeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -71,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/agent': typeof AgentRoute
   '/rights': typeof RightsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/team': typeof TeamRoute
   '/auth/agent': typeof AuthAgentRoute
   '/auth/author': typeof AuthAuthorRoute
   '/authors/$authorId': typeof AuthorsAuthorIdRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/agent': typeof AgentRoute
   '/rights': typeof RightsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/team': typeof TeamRoute
   '/auth/agent': typeof AuthAgentRoute
   '/auth/author': typeof AuthAuthorRoute
   '/authors/$authorId': typeof AuthorsAuthorIdRoute
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/agent': typeof AgentRoute
   '/rights': typeof RightsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/team': typeof TeamRoute
   '/auth/agent': typeof AuthAgentRoute
   '/auth/author': typeof AuthAuthorRoute
   '/authors/$authorId': typeof AuthorsAuthorIdRoute
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/agent'
     | '/rights'
     | '/sitemap.xml'
+    | '/team'
     | '/auth/agent'
     | '/auth/author'
     | '/authors/$authorId'
@@ -118,6 +128,7 @@ export interface FileRouteTypes {
     | '/agent'
     | '/rights'
     | '/sitemap.xml'
+    | '/team'
     | '/auth/agent'
     | '/auth/author'
     | '/authors/$authorId'
@@ -129,6 +140,7 @@ export interface FileRouteTypes {
     | '/agent'
     | '/rights'
     | '/sitemap.xml'
+    | '/team'
     | '/auth/agent'
     | '/auth/author'
     | '/authors/$authorId'
@@ -141,6 +153,7 @@ export interface RootRouteChildren {
   AgentRoute: typeof AgentRoute
   RightsRoute: typeof RightsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TeamRoute: typeof TeamRoute
   AuthAgentRoute: typeof AuthAgentRoute
   AuthAuthorRoute: typeof AuthAuthorRoute
   AuthorsAuthorIdRoute: typeof AuthorsAuthorIdRoute
@@ -149,6 +162,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/team': {
+      id: '/team'
+      path: '/team'
+      fullPath: '/team'
+      preLoaderRoute: typeof TeamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -221,6 +241,7 @@ const rootRouteChildren: RootRouteChildren = {
   AgentRoute: AgentRoute,
   RightsRoute: RightsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TeamRoute: TeamRoute,
   AuthAgentRoute: AuthAgentRoute,
   AuthAuthorRoute: AuthAuthorRoute,
   AuthorsAuthorIdRoute: AuthorsAuthorIdRoute,
