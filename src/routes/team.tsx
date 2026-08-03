@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { Linkedin, Mail } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { bookColor, staff } from "@/data/staff";
+import { bookColor, staff, type Staff } from "@/data/staff";
 
 export const Route = createFileRoute("/team")({
   component: Team,
