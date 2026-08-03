@@ -31,10 +31,10 @@ function scatter(seed: string, i: number) {
   let n = 0;
   for (const ch of seed + i) n = (n * 37 + ch.charCodeAt(0)) % 997;
   const angle = ((n % 360) / 360) * Math.PI * 2;
-  const dist = 34 + (n % 61);
+  const dist = 96 + (n % 90);
   return {
-    tx: `${Math.round(Math.cos(angle) * dist * 1.5)}px`,
-    ty: `${Math.round(Math.sin(angle) * dist * 0.75)}px`,
+    tx: `${Math.round(Math.cos(angle) * dist * 1.35)}px`,
+    ty: `${Math.round(Math.sin(angle) * dist * 0.6)}px`,
     rot: `${(n % 90) - 45}deg`,
     delay: `${(n % 12) * 18}ms`,
     color: bookColor(seed + i),
@@ -65,7 +65,7 @@ function TeamTile({ member }: { member: Staff }) {
           return (
             <div
               key={i}
-              className="pointer-events-none absolute top-[62%] left-1/2 -translate-x-1/2 -translate-y-1/2"
+              className="pointer-events-none absolute top-[62%] left-1/2 z-10 -translate-x-1/2 -translate-y-1/2"
             >
               <div
                 className="opacity-0 transition-all duration-700 ease-out group-hover/tile:opacity-100 group-hover/tile:[transform:translate3d(var(--tx),var(--ty),0)_rotate(var(--rot))]"
