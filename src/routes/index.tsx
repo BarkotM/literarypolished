@@ -199,16 +199,12 @@ function Index() {
                     </p>
                   </div>
                 </div>
-                <div className="mt-6 grid grid-cols-3 gap-4">
-                  {author.books.slice(0, 3).map((b) => (
-                    <div key={b.id}>
-                      <BookCover id={b.id} title={b.title} author={author.name} year={b.year} />
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-4 flex items-center gap-1.5 border-t border-neutral-200 pt-3">
+                <div className="mt-6 flex items-center gap-1.5 border-t border-neutral-200 pt-3">
                   <span className="eyebrow text-primary">View author page</span>
                   <ArrowUpRight className="h-3.5 w-3.5 text-primary transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  <span className="eyebrow ml-auto text-muted-foreground">
+                    {author.books.length} title{author.books.length === 1 ? "" : "s"}
+                  </span>
                 </div>
               </Link>
             ))}
