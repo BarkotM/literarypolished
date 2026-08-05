@@ -143,12 +143,12 @@ function CatalogueMenu() {
 
   return (
     <div className="relative" onMouseEnter={show} onMouseLeave={hide}>
-      <a
-        href="/#catalogue"
+      <Link
+        to="/catalogue"
         className="eyebrow flex items-center gap-1 text-muted-foreground transition-colors hover:text-primary"
       >
         Catalogue <ChevronDown className="h-3 w-3" />
-      </a>
+      </Link>
       {open && (
         <div className="absolute top-full left-1/2 z-50 w-[26rem] -translate-x-1/2 pt-4">
           <div className="border border-neutral-200 bg-white p-4 shadow-xl">
@@ -180,9 +180,9 @@ function CatalogueMenu() {
               {!q && (
                 <ul className="space-y-2 text-sm">
                   <li>
-                    <a href="/#catalogue" className="hover:text-primary">
+                    <Link to="/catalogue" onClick={() => setOpen(false)} className="hover:text-primary">
                       Browse the full catalogue
-                    </a>
+                    </Link>
                   </li>
                   <li>
                     <a href="/#authors" className="hover:text-primary">

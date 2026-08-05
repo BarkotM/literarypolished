@@ -110,14 +110,14 @@ function Index() {
       </section>
 
       {/* Search + filters */}
-      <section id="catalogue" className="border-b border-neutral-200 bg-white">
+      <section className="border-b border-neutral-200 bg-white">
         <div className="mx-auto max-w-[1240px] px-5 py-8">
           <div className="relative">
             <Search className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by author, book title, or genre — searching a title takes you to its author"
+              placeholder="Search authors by name, language or genre"
               className="h-14 rounded-none border-neutral-200 pl-11 text-base shadow-none focus-visible:ring-1"
             />
           </div>
@@ -338,7 +338,10 @@ function Index() {
         <div className="mx-auto max-w-[1240px] px-5 py-14">
           <div className="flex items-baseline justify-between border-b border-neutral-200 pb-4">
             <h2 className="font-display text-2xl">Recently catalogued</h2>
-            <span className="eyebrow text-muted-foreground">TSEHAI Archives</span>
+            <Link to="/catalogue" className="eyebrow inline-flex items-center gap-1.5 text-primary">
+              Browse full catalogue
+              <ArrowUpRight className="h-3.5 w-3.5" />
+            </Link>
           </div>
           <div className="mt-8 grid gap-8 sm:grid-cols-3 lg:grid-cols-6">
             {allBooks.map((b) => (
@@ -356,6 +359,15 @@ function Index() {
                 <div className="text-xs text-muted-foreground">{b.author.name}</div>
               </Link>
             ))}
+          </div>
+          <div className="mt-10 border-t border-neutral-200 pt-8">
+            <Link
+              to="/catalogue"
+              className="inline-flex items-center gap-2 border border-ink bg-ink px-6 py-3 text-sm text-white transition-colors hover:bg-primary hover:border-primary"
+            >
+              Browse full catalogue
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </section>

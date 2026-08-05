@@ -27,67 +27,12 @@ export const Route = createFileRoute("/team")({
   }),
 });
 
-function scatter(seed: string, i: number) {
-  let h = 2166136261;
-  for (const ch of seed) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
-  let n = Math.imul(h ^ (i + 1), 2654435761) >>> 0;
-  const rnd = () => {
-    n = (Math.imul(n, 1664525) + 1013904223) >>> 0;
-    return n / 4294967296;
-  };
-  const angle = rnd() * Math.PI * 2;
-  const dist = 90 + rnd() * 100;
-  return {
-    tx: `${Math.round(Math.cos(angle) * dist * 1.35)}px`,
-    ty: `${Math.round(Math.sin(angle) * dist * 0.6)}px`,
-    rot: `${Math.round(rnd() * 90 - 45)}deg`,
-    delay: `${Math.round(rnd() * 200)}ms`,
-    color: bookColor(seed + i),
-  };
-}
-
-function MiniBook({ color }: { color: string }) {
-  return (
-    <div className="relative h-[11px] w-[16px] [transform:rotateX(52deg)_rotateZ(-28deg)]" style={{ background: color }}>
-      <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.35),rgba(0,0,0,0.15))]" />
-      <div
-        className="absolute bottom-0 left-0 h-[3px] w-full origin-bottom [transform:rotateX(-90deg)]"
-        style={{ background: "#f4f1ea" }}
-      />
-    </div>
-  );
-}
-
 function TeamTile({ member }: { member: Staff }) {
   const seed = member.id + member.name;
   const color = bookColor(seed);
   return (
     <div className="group/tile aspect-square w-full [perspective:1100px]">
       <div className="relative flex h-full w-full items-center justify-center">
-        {/* scattering mini books */}
-        {Array.from({ length: 20 }).map((_, i) => {
-          const s = scatter(seed, i);
-          return (
-            <div
-              key={i}
-              className="pointer-events-none absolute top-[62%] left-1/2 z-10 -translate-x-1/2 -translate-y-1/2"
-            >
-              <div
-                className="opacity-0 transition-all duration-700 ease-out group-hover/tile:opacity-100 [transform:translate3d(0,0,80px)] group-hover/tile:[transform:translate3d(var(--tx),var(--ty),80px)_rotate(var(--rot))]"
-                style={
-                  {
-                    "--tx": s.tx,
-                    "--ty": s.ty,
-                    "--rot": s.rot,
-                    transitionDelay: s.delay,
-                  } as React.CSSProperties
-                }
-              >
-                <MiniBook color={s.color} />
-              </div>
-            </div>
-          );
-        })}
         <div
           className="relative h-[62%] w-[74%] transition-transform duration-500 [transform:rotateX(52deg)_rotateZ(-28deg)] [transform-style:preserve-3d] group-hover/tile:[transform:rotateX(44deg)_rotateZ(-20deg)]"
           style={{ background: color }}

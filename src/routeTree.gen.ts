@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TeamRouteImport } from './routes/team'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RightsRouteImport } from './routes/rights'
+import { Route as CatalogueRouteImport } from './routes/catalogue'
 import { Route as AgentRouteImport } from './routes/agent'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
@@ -33,6 +34,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const RightsRoute = RightsRouteImport.update({
   id: '/rights',
   path: '/rights',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CatalogueRoute = CatalogueRouteImport.update({
+  id: '/catalogue',
+  path: '/catalogue',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AgentRoute = AgentRouteImport.update({
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
   '/agent': typeof AgentRoute
+  '/catalogue': typeof CatalogueRoute
   '/rights': typeof RightsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
   '/agent': typeof AgentRoute
+  '/catalogue': typeof CatalogueRoute
   '/rights': typeof RightsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRoute
@@ -100,6 +108,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
   '/agent': typeof AgentRoute
+  '/catalogue': typeof CatalogueRoute
   '/rights': typeof RightsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account'
     | '/agent'
+    | '/catalogue'
     | '/rights'
     | '/sitemap.xml'
     | '/team'
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account'
     | '/agent'
+    | '/catalogue'
     | '/rights'
     | '/sitemap.xml'
     | '/team'
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account'
     | '/agent'
+    | '/catalogue'
     | '/rights'
     | '/sitemap.xml'
     | '/team'
@@ -151,6 +163,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountRoute: typeof AccountRoute
   AgentRoute: typeof AgentRoute
+  CatalogueRoute: typeof CatalogueRoute
   RightsRoute: typeof RightsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TeamRoute: typeof TeamRoute
@@ -181,6 +194,13 @@ declare module '@tanstack/react-router' {
       path: '/rights'
       fullPath: '/rights'
       preLoaderRoute: typeof RightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/catalogue': {
+      id: '/catalogue'
+      path: '/catalogue'
+      fullPath: '/catalogue'
+      preLoaderRoute: typeof CatalogueRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/agent': {
@@ -239,6 +259,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountRoute: AccountRoute,
   AgentRoute: AgentRoute,
+  CatalogueRoute: CatalogueRoute,
   RightsRoute: RightsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TeamRoute: TeamRoute,
