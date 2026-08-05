@@ -104,24 +104,45 @@ function Catalogue() {
             No titles match that search. Try another title, genre or author.
           </p>
         ) : (
-          <div className="grid gap-x-8 gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
-            {books.map((b) => (
-              <Link key={b.id} to="/books/$bookId" params={{ bookId: b.id }} className="group">
-                <BookCover id={b.id} title={b.title} author={b.author.name} year={b.year} />
-                <Badge
-                  variant="outline"
-                  className="eyebrow mt-3 rounded-none border-amber-badge/40 bg-amber-badge/10 text-amber-badge"
-                >
-                  {b.badge}
-                </Badge>
-                <h2 className="mt-2 font-display text-base leading-snug group-hover:text-primary">
-                  {b.title}
-                </h2>
-                <div className="text-xs text-muted-foreground">{b.author.name}</div>
-                <div className="eyebrow mt-1 text-muted-foreground">
-                  {b.genre} · {b.year}
+          <div className="space-y-4">
+            {Array.from({ length: Math.ceil(books.length / 4) }, (_, r) =>
+              books.slice(r * 4, r * 4 + 4),
+            ).map((row, r) => (
+              <div key={r} className="relative pb-10">
+                <div className="grid grid-cols-2 items-end gap-x-8 gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
+                  {row.map((b) => (
+                    <Link
+                      key={b.id}
+                      to="/books/$bookId"
+                      params={{ bookId: b.id }}
+                      className="group relative"
+                    >
+                      <BookCover id={b.id} title={b.title} author={b.author.name} year={b.year} />
+                      {/* contact shadow where the book meets the shelf */}
+                      <div className="pointer-events-none mx-auto h-3 w-[92%] rounded-[50%] bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.28),transparent_70%)] blur-[2px]" />
+                      <Badge
+                        variant="outline"
+                        className="eyebrow mt-2 rounded-none border-amber-badge/40 bg-amber-badge/10 text-amber-badge"
+                      >
+                        {b.badge}
+                      </Badge>
+                      <h2 className="mt-2 font-display text-base leading-snug group-hover:text-primary">
+                        {b.title}
+                      </h2>
+                      <div className="text-xs text-muted-foreground">{b.author.name}</div>
+                      <div className="eyebrow mt-1 text-muted-foreground">
+                        {b.genre} · {b.year}
+                      </div>
+                    </Link>
+                  ))}
                 </div>
-              </Link>
+                {/* white shelf plank */}
+                <div className="pointer-events-none absolute inset-x-[-1.5rem] bottom-0">
+                  <div className="h-[10px] rounded-[2px] bg-gradient-to-b from-white via-[#f3f1ec] to-[#ded9d0] shadow-[0_1px_0_rgba(255,255,255,0.9)_inset,0_10px_18px_-10px_rgba(0,0,0,0.35)]" />
+                  <div className="h-[6px] bg-gradient-to-b from-[#cfc9bf] to-[#efece6]" />
+                  <div className="mx-2 h-4 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.12),transparent)] blur-[3px]" />
+                </div>
+              </div>
             ))}
           </div>
         )}
