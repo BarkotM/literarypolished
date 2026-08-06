@@ -30,7 +30,7 @@ function AuthorAuth() {
       title="For writers, translators and estates."
       intro="Create an author account to hold your biography, your languages and your bibliography — then submit new titles for editorial review. Everything you enter here becomes the raw material of your author page."
       destination="/account"
-      crossLinkLabel="Publishing agent entrance"
+      crossLinkLabel="Literary agent entrance"
       crossLinkTo="/auth/agent"
       extraFields={[
         { name: "pen_name", label: "Pen name (if different)", placeholder: "Optional" },

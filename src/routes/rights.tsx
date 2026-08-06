@@ -17,7 +17,7 @@ export const Route = createFileRoute("/rights")({
   head: () => ({
     meta: [
       { title: "Rights Manager Console — TSEHAI" },
-      { name: "description", content: "Staff console for reviewing author and publishing agent requests." },
+      { name: "description", content: "Staff console for reviewing author and literary agent requests." },
       { name: "robots", content: "noindex" },
       { property: "og:title", content: "Rights Manager Console — TSEHAI" },
       { property: "og:description", content: "Staff console for TSEHAI Publishers." },

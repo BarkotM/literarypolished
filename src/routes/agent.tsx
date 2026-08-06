@@ -124,7 +124,7 @@ function AgentPage() {
     <div className="min-h-screen bg-paper">
       <SiteHeader />
       <main className="mx-auto max-w-[1240px] px-5 py-12">
-        <div className="eyebrow text-primary">Publishing agent console</div>
+        <div className="eyebrow text-primary">Literary agent console</div>
         <h1 className="mt-3 font-display text-5xl font-bold tracking-tight">
           {profile.agency_name || profile.full_name}
         </h1>

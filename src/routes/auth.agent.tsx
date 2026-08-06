@@ -5,13 +5,13 @@ export const Route = createFileRoute("/auth/agent")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Publishing Agent Entrance — TSEHAI Portal" },
+      { title: "Literary Agent Entrance — TSEHAI Portal" },
       {
         name: "description",
         content:
-          "Publishing agents: register your agency, browse the TSEHAI catalogue and request rights conversations on individual titles.",
+          "Literary agents: register your agency, browse the TSEHAI catalogue and request rights conversations on individual titles.",
       },
-      { property: "og:title", content: "Publishing Agent Entrance — TSEHAI Portal" },
+      { property: "og:title", content: "Literary Agent Entrance — TSEHAI Portal" },
       {
         property: "og:description",
         content: "Register your agency and request to work with TSEHAI titles.",
@@ -26,7 +26,7 @@ function AgentAuth() {
     <AuthPanel
       kind="agent"
       accent="hsl(var(--foreground))"
-      eyebrow="Publishing Agent Entrance"
+      eyebrow="Literary Agent Entrance"
       title="For agencies, scouts and rights buyers."
       intro="Register your agency to request working rights on catalogue titles. Every request enters a queue reviewed by the TSEHAI rights manager, and its status stays visible in your requests basket."
       destination="/agent"

@@ -71,7 +71,7 @@ export const staff: Staff[] = [
     id: "s5",
     name: "Sara Wolde",
     role: "agent_liaison",
-    title: "Publishing Agent Liaison",
+    title: "Literary Agent Liaison",
     email: "sara.wolde@literary.com",
     password: "Liaison#2026",
     permissions: ["Answer agent enquiries", "Triage collaboration requests"],
