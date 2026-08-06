@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Stepper } from "@/components/stepper";
 
 export type ExtraField = {
   name: string;
@@ -41,6 +42,8 @@ export function AuthPanel({
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [values, setValues] = useState<Record<string, string>>({});
+  const [step, setStep] = useState(0);
+  const STEPS = ["Identity", "Your details", "Review"];
   const v = (k: string) => values[k] ?? "";
   const set = (k: string, val: string) => setValues((s) => ({ ...s, [k]: val }));
 
@@ -66,8 +69,8 @@ export function AuthPanel({
       await supabase.auth.signOut();
       toast.error(
         kind === "author"
-          ? "That account is not an author account. Use the publishing agent entrance."
-          : "That account is not a publishing agent account. Use the author entrance.",
+          ? "That account is not an author account. Use the literary agent entrance."
+          : "That account is not a literary agent account. Use the author entrance.",
       );
       return;
     }
@@ -141,54 +144,118 @@ export function AuthPanel({
             </div>
 
             <TabsContent value="signup" className="m-0 px-6 py-6">
-              <form className="space-y-4" onSubmit={signUp}>
-                <div className="space-y-1.5">
-                  <Label className="eyebrow text-muted-foreground">Full name</Label>
-                  <Input required value={v("full_name")} onChange={(e) => set("full_name", e.target.value)} />
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-1.5">
-                    <Label className="eyebrow text-muted-foreground">Email</Label>
-                    <Input required type="email" value={v("up_email")} onChange={(e) => set("up_email", e.target.value)} />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="eyebrow text-muted-foreground">Password</Label>
-                    <Input
-                      required
-                      type="password"
-                      placeholder="8+ characters"
-                      value={v("up_password")}
-                      onChange={(e) => set("up_password", e.target.value)}
-                    />
-                  </div>
-                </div>
-                {extraFields.map((f) =>
-                  f.textarea ? (
-                    <div key={f.name} className="space-y-1.5">
-                      <Label className="eyebrow text-muted-foreground">{f.label}</Label>
-                      <Textarea
-                        rows={4}
-                        required={f.required}
-                        placeholder={f.placeholder}
-                        value={v(f.name)}
-                        onChange={(e) => set(f.name, e.target.value)}
-                      />
+              <Stepper steps={STEPS} current={step} />
+              <form className="mt-6 space-y-4" onSubmit={signUp}>
+                {step === 0 && (
+                  <>
+                    <div className="space-y-1.5">
+                      <Label className="eyebrow text-muted-foreground">Full name</Label>
+                      <Input required value={v("full_name")} onChange={(e) => set("full_name", e.target.value)} />
                     </div>
-                  ) : (
-                    <div key={f.name} className="space-y-1.5">
-                      <Label className="eyebrow text-muted-foreground">{f.label}</Label>
-                      <Input
-                        required={f.required}
-                        placeholder={f.placeholder}
-                        value={v(f.name)}
-                        onChange={(e) => set(f.name, e.target.value)}
-                      />
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="space-y-1.5">
+                        <Label className="eyebrow text-muted-foreground">Email</Label>
+                        <Input required type="email" value={v("up_email")} onChange={(e) => set("up_email", e.target.value)} />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="eyebrow text-muted-foreground">Password</Label>
+                        <Input
+                          required
+                          type="password"
+                          placeholder="8+ characters"
+                          value={v("up_password")}
+                          onChange={(e) => set("up_password", e.target.value)}
+                        />
+                      </div>
                     </div>
-                  ),
+                  </>
                 )}
-                <Button disabled={busy} className="w-full gap-2 rounded-none" type="submit">
-                  {busy && <Loader2 className="h-4 w-4 animate-spin" />} Create {kind === "author" ? "author" : "agent"} account
-                </Button>
+
+                {step === 1 &&
+                  extraFields.map((f) =>
+                    f.textarea ? (
+                      <div key={f.name} className="space-y-1.5">
+                        <Label className="eyebrow text-muted-foreground">{f.label}</Label>
+                        <Textarea
+                          rows={4}
+                          required={f.required}
+                          placeholder={f.placeholder}
+                          value={v(f.name)}
+                          onChange={(e) => set(f.name, e.target.value)}
+                        />
+                      </div>
+                    ) : (
+                      <div key={f.name} className="space-y-1.5">
+                        <Label className="eyebrow text-muted-foreground">{f.label}</Label>
+                        <Input
+                          required={f.required}
+                          placeholder={f.placeholder}
+                          value={v(f.name)}
+                          onChange={(e) => set(f.name, e.target.value)}
+                        />
+                      </div>
+                    ),
+                  )}
+
+                {step === 2 && (
+                  <dl className="border border-neutral-200">
+                    {[
+                      { label: "Full name", value: v("full_name") },
+                      { label: "Email", value: v("up_email") },
+                      ...extraFields.map((f) => ({ label: f.label, value: v(f.name) })),
+                    ].map((row) => (
+                      <div
+                        key={row.label}
+                        className="grid gap-1 border-b border-neutral-100 px-4 py-3 last:border-0 sm:grid-cols-[180px_1fr]"
+                      >
+                        <dt className="eyebrow text-muted-foreground">{row.label}</dt>
+                        <dd className="text-sm break-words">{row.value || "—"}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
+
+                <div className="flex items-center gap-3 pt-2">
+                  {step > 0 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="rounded-none"
+                      onClick={() => setStep((n) => n - 1)}
+                    >
+                      Back
+                    </Button>
+                  )}
+                  {step < STEPS.length - 1 ? (
+                    <Button
+                      type="button"
+                      className="ml-auto rounded-none"
+                      onClick={() => {
+                        if (step === 0) {
+                          if (!v("full_name").trim() || !v("up_email").trim() || v("up_password").length < 8) {
+                            toast.error("Complete name, email and an 8+ character password to continue.");
+                            return;
+                          }
+                        }
+                        if (step === 1) {
+                          const missing = extraFields.find((f) => f.required && !v(f.name).trim());
+                          if (missing) {
+                            toast.error(`${missing.label} is required.`);
+                            return;
+                          }
+                        }
+                        setStep((n) => n + 1);
+                      }}
+                    >
+                      Continue
+                    </Button>
+                  ) : (
+                    <Button disabled={busy} className="ml-auto gap-2 rounded-none" type="submit">
+                      {busy && <Loader2 className="h-4 w-4 animate-spin" />} Create{" "}
+                      {kind === "author" ? "author" : "literary agent"} account
+                    </Button>
+                  )}
+                </div>
               </form>
             </TabsContent>
 
