@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
 import { ArrowLeft, BookOpen, Building2, Globe, Library, ShoppingBag } from "lucide-react";
 import { BookCover } from "@/components/book-cover";
@@ -19,6 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { Author, Book } from "@/data/catalog";
 import { getBook } from "@/data/catalog";
+import { cn } from "@/lib/utils";
 
 const RETAILER_ICONS: Record<string, typeof ShoppingBag> = {
   "TSEHAI Store": ShoppingBag,
@@ -69,9 +71,17 @@ function Fallback({ title }: { title: string }) {
   );
 }
 
+const RIGHTS_ROWS = [
+  { key: "sold", label: "Language(s) sold", tone: "border-neutral-300 bg-neutral-100 text-foreground" },
+  { key: "held", label: "Language(s) held", tone: "border-ink/30 bg-ink/5 text-ink" },
+  { key: "negotiating", label: "Language(s) in negotiation", tone: "border-amber-badge/40 bg-amber-badge/10 text-amber-badge" },
+  { key: "open", label: "Language(s) open", tone: "border-primary/40 bg-primary/10 text-primary" },
+] as const;
+
 function BookPage() {
   const params = Route.useParams();
   const book: Book & { author: Author } = getBook(params.bookId)!;
+  const [tab, setTab] = useState<"description" | "additional">("description");
 
   const specs: [string, string][] = [
     ["Publication date", book.publicationDate],
@@ -89,7 +99,7 @@ function BookPage() {
       <SiteHeader />
 
       <section className="border-b border-neutral-200 bg-white">
-        <div className="mx-auto max-w-[1240px] px-5 pt-8 pb-16">
+        <div className="mx-auto max-w-[1240px] px-5 pt-8 pb-14">
           <Link
             to="/authors/$authorId"
             params={{ authorId: book.author.id }}
@@ -98,71 +108,92 @@ function BookPage() {
             <ArrowLeft className="h-3.5 w-3.5" /> {book.author.name}
           </Link>
 
-          <div className="mt-10 grid gap-14 lg:grid-cols-[minmax(0,340px)_1fr]">
+          {/* Product-style masthead: cover left, record right */}
+          <div className="mt-8 grid gap-12 lg:grid-cols-[minmax(0,360px)_1fr]">
             <div className="[perspective:1400px]">
               <BookCover
                 id={book.id}
                 title={book.title}
                 author={book.author.name}
                 year={book.year}
-                className="max-w-[340px]"
+                className="max-w-[360px]"
               />
             </div>
 
             <div>
-              <Badge
-                variant="outline"
-                className="eyebrow rounded-none border-amber-badge/40 bg-amber-badge/10 text-amber-badge"
-              >
-                {book.badge}
-              </Badge>
-              <h1 className="mt-4 font-display text-[clamp(2.2rem,5vw,3.8rem)] leading-[1] tracking-[-0.02em]">
+              <h1 className="font-display text-[clamp(1.9rem,4vw,3rem)] leading-[1.05] tracking-[-0.02em]">
                 {book.title}
               </h1>
               {book.originalTitle && (
-                <div className="mt-2 font-display text-2xl text-muted-foreground">
+                <div className="mt-2 font-display text-xl text-muted-foreground">
                   {book.originalTitle}
                 </div>
               )}
-              {book.subtitle && (
-                <p className="mt-4 max-w-2xl font-display text-xl text-muted-foreground italic">
-                  {book.subtitle}
-                </p>
-              )}
-              <p className="mt-5 text-sm">
-                By{" "}
-                <Link
-                  to="/authors/$authorId"
-                  params={{ authorId: book.author.id }}
-                  className="font-medium text-primary hover:underline"
-                >
-                  {book.author.name}
-                </Link>{" "}
-                · {book.year}
-              </p>
+              <p className="eyebrow mt-4 text-muted-foreground">{book.badge}</p>
 
-              <div className="mt-6 flex flex-wrap items-center gap-2">
-                <span className="eyebrow rounded-full border border-neutral-200 px-3 py-1.5">
-                  {book.genre}
-                </span>
-                <span className="eyebrow rounded-full border border-neutral-200 px-3 py-1.5 text-muted-foreground">
-                  Original: {book.originalLanguage}
-                </span>
-                {book.translations.map((t) => (
-                  <span
-                    key={t}
-                    className="eyebrow rounded-full bg-secondary px-3 py-1.5 text-muted-foreground"
-                  >
-                    {t}
-                  </span>
+              <dl className="mt-6 space-y-1.5 text-sm">
+                {[
+                  ["ISBN Code", book.archiveId],
+                  ["Author", book.author.name],
+                  ["Language", book.originalLanguage],
+                  ["Pages number", String(book.pages)],
+                  ["Format", "Paperback"],
+                  ["Publication date", book.publicationDate],
+                ].map(([k, v]) => (
+                  <div key={k} className="flex flex-wrap gap-x-2">
+                    <dt className="font-semibold">{k}:</dt>
+                    <dd className="text-muted-foreground">
+                      {k === "Author" ? (
+                        <Link
+                          to="/authors/$authorId"
+                          params={{ authorId: book.author.id }}
+                          className="text-primary hover:underline"
+                        >
+                          {v}
+                        </Link>
+                      ) : (
+                        v
+                      )}
+                    </dd>
+                  </div>
                 ))}
+              </dl>
+
+              {/* Rights availability by language */}
+              <div className="mt-7 border border-neutral-200">
+                <div className="eyebrow border-b border-neutral-200 bg-paper px-4 py-2.5 text-muted-foreground">
+                  Rights availability by language
+                </div>
+                <div className="divide-y divide-neutral-100">
+                  {RIGHTS_ROWS.map((row) => {
+                    const list = book.rights[row.key];
+                    return (
+                      <div
+                        key={row.key}
+                        className="grid gap-2 px-4 py-3 sm:grid-cols-[220px_1fr] sm:gap-6"
+                      >
+                        <div className="eyebrow text-muted-foreground">{row.label}</div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {list.length === 0 ? (
+                            <span className="text-sm text-muted-foreground">None</span>
+                          ) : (
+                            list.map((l) => (
+                              <span
+                                key={l}
+                                className={cn("eyebrow border px-2.5 py-1", row.tone)}
+                              >
+                                {l}
+                              </span>
+                            ))
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
 
-              <p className="mt-7 max-w-2xl text-[1.05rem] leading-[1.75] text-muted-foreground">
-                {book.description}
-              </p>
-
-              <div className="mt-9 flex flex-wrap gap-3">
+              <div className="mt-8 flex flex-wrap gap-3">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button className="h-12 rounded-none px-7 tracking-wide uppercase">
@@ -220,32 +251,42 @@ function BookPage() {
         </div>
       </section>
 
-      {/* Praise */}
-      <section className="mx-auto max-w-[1240px] px-5 py-16">
-        <h2 className="border-b border-neutral-200 pb-4 font-display text-2xl">
-          Praise &amp; press reviews
-        </h2>
-        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {book.praise.map((p) => (
-            <blockquote
-              key={p.source}
-              className="border border-neutral-200 bg-white p-7 shadow-[0_10px_30px_-26px_rgba(0,0,0,0.5)]"
+      {/* Description / additional information tabs */}
+      <section className="mx-auto max-w-[1240px] px-5 py-12">
+        <div className="flex justify-center gap-8 border-b border-neutral-200">
+          {(
+            [
+              ["description", "Description"],
+              ["additional", "Additional information"],
+            ] as const
+          ).map(([v, label]) => (
+            <button
+              key={v}
+              onClick={() => setTab(v)}
+              className={cn(
+                "eyebrow -mb-px border-b-2 px-2 py-4 transition-colors",
+                tab === v
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-primary",
+              )}
             >
-              <div className="font-display text-5xl leading-none text-primary/25">“</div>
-              <p className="mt-2 font-display text-lg leading-relaxed">{p.quote}</p>
-              <footer className="eyebrow mt-5 text-muted-foreground">— {p.source}</footer>
-            </blockquote>
+              {label}
+            </button>
           ))}
         </div>
-      </section>
 
-      {/* Specs */}
-      <section className="border-t border-neutral-200 bg-white">
-        <div className="mx-auto max-w-[1240px] px-5 py-16">
-          <h2 className="border-b border-neutral-200 pb-4 font-display text-2xl">
-            Book details &amp; specs
-          </h2>
-          <dl className="mt-6 max-w-3xl">
+        {tab === "description" ? (
+          <div className="mx-auto mt-10 max-w-3xl space-y-6 text-[1.02rem] leading-[1.85] text-muted-foreground">
+            <p>{book.description}</p>
+            {book.subtitle && <p className="font-display text-xl italic">{book.subtitle}</p>}
+            <div className="text-center font-display text-xl text-primary/50">◊ ◊ ◊</div>
+            <p>{book.excerpt}</p>
+            {book.excerptOriginal && (
+              <p className="font-display text-lg text-foreground">{book.excerptOriginal}</p>
+            )}
+          </div>
+        ) : (
+          <dl className="mx-auto mt-10 max-w-3xl">
             {specs.map(([k, v]) => (
               <div
                 key={k}
@@ -255,7 +296,47 @@ function BookPage() {
                 <dd className="text-sm">{v}</dd>
               </div>
             ))}
+            {RIGHTS_ROWS.map((row) => (
+              <div
+                key={row.key}
+                className="grid grid-cols-1 gap-1 border-b border-neutral-100 py-4 sm:grid-cols-[240px_1fr] sm:gap-8"
+              >
+                <dt className="eyebrow text-muted-foreground">{row.label}</dt>
+                <dd className="text-sm">
+                  {book.rights[row.key].length ? book.rights[row.key].join(", ") : "None"}
+                </dd>
+              </div>
+            ))}
           </dl>
+        )}
+      </section>
+
+      {/* Praise */}
+      <section className="border-t border-neutral-200 bg-white">
+        <div className="mx-auto max-w-[1240px] px-5 py-16">
+          <h2 className="border-b border-neutral-200 pb-4 font-display text-2xl">
+            Praise &amp; press reviews
+          </h2>
+          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {book.praise.map((p) => (
+              <blockquote
+                key={p.source}
+                className="border border-neutral-200 bg-paper p-7 shadow-[0_10px_30px_-26px_rgba(0,0,0,0.5)]"
+              >
+                <div className="font-display text-5xl leading-none text-primary/25">“</div>
+                <p className="mt-2 font-display text-lg leading-relaxed">{p.quote}</p>
+                <footer className="eyebrow mt-5 text-muted-foreground">— {p.source}</footer>
+              </blockquote>
+            ))}
+          </div>
+          <div className="mt-10">
+            <Badge
+              variant="outline"
+              className="eyebrow rounded-none border-amber-badge/40 bg-amber-badge/10 text-amber-badge"
+            >
+              {book.genre}
+            </Badge>
+          </div>
         </div>
       </section>
 

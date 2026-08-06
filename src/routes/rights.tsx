@@ -17,7 +17,7 @@ export const Route = createFileRoute("/rights")({
   head: () => ({
     meta: [
       { title: "Rights Manager Console — TSEHAI" },
-      { name: "description", content: "Staff console for reviewing author and publishing agent requests." },
+      { name: "description", content: "Staff console for reviewing author and literary agent requests." },
       { name: "robots", content: "noindex" },
       { property: "og:title", content: "Rights Manager Console — TSEHAI" },
       { property: "og:description", content: "Staff console for TSEHAI Publishers." },
@@ -189,6 +189,20 @@ function RightsPage() {
                   </div>
                   <Badge className={`rounded-none ${statusTone(b.status ?? "")}`}>{statusLabel(b.status ?? "")}</Badge>
                 </div>
+                <p className="mt-2 text-sm">
+                  <span className="eyebrow text-neutral-500">Solicitation: </span>
+                  <span
+                    className={
+                      String(b["solicitation"] ?? "unsolicited") === "unsolicited"
+                        ? "text-neutral-400"
+                        : "text-emerald-400"
+                    }
+                  >
+                    {String(b["solicitation"] ?? "unsolicited")}
+                    {b["referral_name"] ? ` — ${String(b["referral_name"])}` : ""}
+                    {b["referral_reference"] ? ` (${String(b["referral_reference"])})` : ""}
+                  </span>
+                </p>
                 {b["synopsis"] ? <p className="mt-3 text-sm text-neutral-400">{String(b["synopsis"])}</p> : null}
                 <div className="mt-4 flex flex-wrap gap-2">
                   {[
@@ -224,6 +238,10 @@ function RightsPage() {
                   </div>
                   <Badge className={`rounded-none ${statusTone(c.status ?? "")}`}>{statusLabel(c.status ?? "")}</Badge>
                 </div>
+                <p className="mt-2 text-sm text-neutral-400">
+                  {[c["territory"], c["rights_sought"]].filter(Boolean).map(String).join(" · ") ||
+                    "No terms stated"}
+                </p>
                 {c["message"] ? <p className="mt-3 text-sm text-neutral-400">{String(c["message"])}</p> : null}
                 <div className="mt-4 flex flex-wrap gap-2">
                   {[

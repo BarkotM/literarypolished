@@ -16,7 +16,7 @@ export function AuthorPortrait({
   return (
     <div
       className={cn(
-        "relative overflow-hidden bg-secondary ring-1 ring-border",
+        "group/portrait relative overflow-hidden bg-secondary ring-1 ring-border",
         rounded,
         className,
       )}
@@ -27,7 +27,7 @@ export function AuthorPortrait({
           alt={`Portrait of ${name}`}
           loading="lazy"
           onError={() => setFailed(true)}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover grayscale transition-[filter] duration-500 ease-out group-hover/portrait:grayscale-0 group-hover:grayscale-0"
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center bg-[linear-gradient(150deg,#efece4,#e2ddd1)]">

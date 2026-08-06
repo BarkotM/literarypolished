@@ -7,7 +7,14 @@ import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { authors, allBooks, genreMatches, genres } from "@/data/catalog";
+import { AlphabetIndex } from "@/components/stepper";
+import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
+
+function surnameInitial(name: string) {
+  const parts = name.trim().split(/\s+/);
+  return (parts[parts.length - 1] ?? name)[0]!.toUpperCase();
+}
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -37,6 +44,9 @@ function Index() {
   const [query, setQuery] = useState("");
   const [genre, setGenre] = useState("All");
   const [view, setView] = useState<"grid" | "table">("grid");
+  const [letter, setLetter] = useState<string | null>(null);
+  const { profile } = useAuth();
+  const isReviewer = profile?.kind === "rights_manager";
 
   const q = query.trim().toLowerCase();
 
@@ -58,10 +68,19 @@ function Index() {
           a.languages.join(" ").toLowerCase().includes(q);
         const genreOk = a.books.some((b) => genreMatches(genre, b.genre));
         const titleHit = matchedBooks.length > 0;
-        return { author: a, matchedBooks, visible: genreOk && (authorHit || titleHit), titleHit };
+        const letterOk = !letter || surnameInitial(a.name) === letter;
+        return {
+          author: a,
+          matchedBooks,
+          visible: letterOk && genreOk && (authorHit || titleHit),
+          titleHit,
+        };
       })
-      .filter((r) => r.visible);
-  }, [q, query, genre]);
+      .filter((r) => r.visible)
+      .sort((x, y) => surnameInitial(x.author.name).localeCompare(surnameInitial(y.author.name)));
+  }, [q, query, genre, letter]);
+
+  const letters = useMemo(() => new Set(authors.map((a) => surnameInitial(a.name))), []);
 
   const stats = [
     ["Authors", authors.length],
@@ -137,6 +156,7 @@ function Index() {
                 {g}
               </button>
             ))}
+            {isReviewer && (
             <div className="ml-auto flex items-center border border-neutral-200">
               {([
                 ["grid", LayoutGrid, "Editorial grid"],
@@ -155,7 +175,14 @@ function Index() {
                   <Icon className="h-4 w-4" />
                 </button>
               ))}
+              <span className="eyebrow px-3 text-muted-foreground">Reviewer view</span>
             </div>
+            )}
+          </div>
+
+          <div id="a-z" className="mt-6 border-t border-neutral-200 pt-5">
+            <div className="eyebrow mb-3 text-muted-foreground">A–Z index by surname</div>
+            <AlphabetIndex letters={letters} active={letter} onSelect={setLetter} />
           </div>
         </div>
       </section>
@@ -177,7 +204,7 @@ function Index() {
           </p>
         )}
 
-        {view === "grid" ? (
+        {view === "grid" || !isReviewer ? (
           <div className="grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
             {results.map(({ author, matchedBooks, titleHit }) => (
               <Link
@@ -247,90 +274,6 @@ function Index() {
             </table>
           </div>
         )}
-      </section>
-
-      {/* Submission guidelines */}
-      <section id="guidelines" className="border-t border-neutral-200 bg-white">
-        <div className="mx-auto max-w-[1240px] px-5 py-16">
-          <div className="flex items-baseline justify-between border-b border-neutral-200 pb-4">
-            <h2 className="font-display text-[clamp(1.7rem,3.4vw,2.6rem)]">
-              Submission guidelines &amp; parameters
-            </h2>
-            <span className="eyebrow text-muted-foreground">For authors &amp; agents</span>
-          </div>
-
-          <div className="mt-10 grid gap-12 lg:grid-cols-2">
-            {[
-              {
-                who: "For authors",
-                steps: [
-                  "Create an author account from “Get started!” and choose the author entrance.",
-                  "Complete your profile: legal name, pen name, languages, genres and a 150–400 word biography.",
-                  "Open your account page and use the “+” panel to request a new title.",
-                  "Supply title, year, genre, language, a 200-word synopsis and a clear statement of rights held.",
-                  "Submit. Your request enters the rights queue with status “pending”.",
-                  "Watch your account for the decision: approved, rejected, or a request for more material.",
-                ],
-                rules: [
-                  "One title per request — no bundled series submissions.",
-                  "You must hold or control the rights you claim; estates must name the executor.",
-                  "Previously published works need publisher, ISBN and year of first publication.",
-                  "Amharic, Tigrinya, Oromo, Ge'ez, English and French are accepted.",
-                  "Synopses must be your own words; no AI-generated substitutes.",
-                  "Pending requests may be withdrawn by you at any time; approved records may not.",
-                  "Duplicate submissions of the same title are removed without notice.",
-                ],
-              },
-              {
-                who: "For publishing agents",
-                steps: [
-                  "Create an agent account from “Get started!” and choose the agent entrance.",
-                  "Complete your agency profile: agency name, territory, rights handled and website.",
-                  "Browse the catalogue or use the search to find the titles you want.",
-                  "Open a book page and submit a collaboration request with a short intent message.",
-                  "Track everything in your basket (cart icon, top right) with live status.",
-                  "When status turns to “contact literary agents”, open it to reveal our contact details and write to us within 14 days.",
-                ],
-                rules: [
-                  "Requests must come from a named agency, not a personal address.",
-                  "State the territory and the exact rights sought (print, digital, audio, translation, film).",
-                  "One request per title; repeat requests for the same title are ignored.",
-                  "No offers or figures in the request message — those follow the contact stage.",
-                  "Contact details released to you are confidential and must not be shared or listed.",
-                  "Rejected requests may be resubmitted after six months with new terms.",
-                  "Misrepresenting an agency ends portal access permanently.",
-                ],
-              },
-            ].map((block) => (
-              <div key={block.who}>
-                <div className="eyebrow text-primary">{block.who}</div>
-                <ol className="mt-5 space-y-4">
-                  {block.steps.map((s, i) => (
-                    <li key={s} className="flex gap-4">
-                      <span className="font-display text-lg text-primary tabular-nums">
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                      <span className="text-sm leading-relaxed text-muted-foreground">{s}</span>
-                    </li>
-                  ))}
-                </ol>
-                <div className="eyebrow mt-8 text-muted-foreground">Rules &amp; parameters</div>
-                <ul className="mt-3 space-y-2 border-t border-neutral-200 pt-3">
-                  {block.rules.map((r) => (
-                    <li key={r} className="border-b border-neutral-100 pb-2 text-sm leading-relaxed">
-                      {r}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          <p className="mt-10 max-w-3xl text-sm text-muted-foreground">
-            Review times run 10–15 working days. Decisions are made by the TSEHAI rights desk and are
-            final for the submission cycle in which they were made.
-          </p>
-        </div>
       </section>
 
       {/* Archive strip */}

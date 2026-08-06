@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { statusLabel, statusTone } from "@/lib/status";
+import { Stepper } from "@/components/stepper";
 
 type BookRequest = {
   id: string;
@@ -23,6 +24,8 @@ type BookRequest = {
   status: string;
   decision_note: string | null;
   created_at: string;
+  solicitation: string | null;
+  referral_name: string | null;
 };
 
 export const Route = createFileRoute("/account")({
@@ -38,7 +41,19 @@ export const Route = createFileRoute("/account")({
   component: AccountPage,
 });
 
-const EMPTY = { title: "", year: "", genre: "", language: "", synopsis: "", rights_notes: "" };
+const EMPTY = {
+  title: "",
+  year: "",
+  genre: "",
+  language: "",
+  synopsis: "",
+  rights_notes: "",
+  solicitation: "unsolicited",
+  referral_name: "",
+  referral_reference: "",
+};
+
+const BOOK_STEPS = ["Title", "Synopsis & rights", "Solicitation"];
 
 function AccountPage() {
   const { profile, loading, user, refresh } = useAuth();
@@ -48,6 +63,7 @@ function AccountPage() {
   const [requests, setRequests] = useState<BookRequest[]>([]);
   const [composer, setComposer] = useState(false);
   const [draft, setDraft] = useState({ ...EMPTY });
+  const [step, setStep] = useState(0);
 
   useEffect(() => {
     if (loading) return;
@@ -105,6 +121,7 @@ function AccountPage() {
     }
     toast.success("Title submitted for editorial review");
     setDraft({ ...EMPTY });
+    setStep(0);
     setComposer(false);
     await loadRequests();
   }
@@ -198,50 +215,148 @@ function AccountPage() {
                     <X className="h-4 w-4 text-muted-foreground" />
                   </button>
                 </div>
-                <div className="mt-5 space-y-4">
-                  <div className="space-y-1.5">
-                    <Label className="eyebrow text-muted-foreground">Title</Label>
-                    <Input
-                      required
-                      value={draft.title}
-                      onChange={(e) => setDraft({ ...draft, title: e.target.value })}
-                    />
-                  </div>
-                  <div className="grid gap-4 sm:grid-cols-3">
-                    {[
-                      ["year", "Year"],
-                      ["genre", "Genre"],
-                      ["language", "Original language"],
-                    ].map(([k, label]) => (
-                      <div key={k} className="space-y-1.5">
-                        <Label className="eyebrow text-muted-foreground">{label}</Label>
+                <div className="mt-5">
+                  <Stepper steps={BOOK_STEPS} current={step} />
+                </div>
+                <div className="mt-6 space-y-4">
+                  {step === 0 && (
+                    <>
+                      <div className="space-y-1.5">
+                        <Label className="eyebrow text-muted-foreground">Title</Label>
                         <Input
-                          value={draft[k as keyof typeof draft]}
-                          onChange={(e) => setDraft({ ...draft, [k as string]: e.target.value })}
+                          value={draft.title}
+                          onChange={(e) => setDraft({ ...draft, title: e.target.value })}
                         />
                       </div>
-                    ))}
+                      <div className="grid gap-4 sm:grid-cols-3">
+                        {[
+                          ["year", "Year"],
+                          ["genre", "Genre"],
+                          ["language", "Original language"],
+                        ].map(([k, label]) => (
+                          <div key={k} className="space-y-1.5">
+                            <Label className="eyebrow text-muted-foreground">{label}</Label>
+                            <Input
+                              value={draft[k as keyof typeof draft]}
+                              onChange={(e) => setDraft({ ...draft, [k as string]: e.target.value })}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  {step === 1 && (
+                    <>
+                      <div className="space-y-1.5">
+                        <Label className="eyebrow text-muted-foreground">Synopsis</Label>
+                        <Textarea
+                          rows={6}
+                          value={draft.synopsis}
+                          onChange={(e) => setDraft({ ...draft, synopsis: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="eyebrow text-muted-foreground">Rights &amp; editions note</Label>
+                        <Textarea
+                          rows={3}
+                          value={draft.rights_notes}
+                          onChange={(e) => setDraft({ ...draft, rights_notes: e.target.value })}
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {step === 2 && (
+                    <>
+                      <div className="space-y-2">
+                        <Label className="eyebrow text-muted-foreground">
+                          Is this an unsolicited submission?
+                        </Label>
+                        <div className="grid gap-px border border-neutral-200 bg-neutral-200 sm:grid-cols-3">
+                          {[
+                            ["unsolicited", "Unsolicited", "No prior contact with TSEHAI."],
+                            ["referred", "Referred", "An agent, editor or author recommended me."],
+                            ["solicited", "Solicited", "TSEHAI invited this submission."],
+                          ].map(([val, label, note]) => (
+                            <button
+                              type="button"
+                              key={val}
+                              onClick={() => setDraft({ ...draft, solicitation: val as string })}
+                              className={`bg-white p-4 text-left transition-colors ${
+                                draft.solicitation === val ? "ring-2 ring-primary ring-inset" : "hover:bg-paper"
+                              }`}
+                            >
+                              <div className="eyebrow text-primary">{label}</div>
+                              <p className="mt-1 text-xs text-muted-foreground">{note}</p>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      {draft.solicitation !== "unsolicited" && (
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <div className="space-y-1.5">
+                            <Label className="eyebrow text-muted-foreground">
+                              Who invited or referred you?
+                            </Label>
+                            <Input
+                              required
+                              value={draft.referral_name}
+                              onChange={(e) => setDraft({ ...draft, referral_name: e.target.value })}
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <Label className="eyebrow text-muted-foreground">
+                              Reference (email, letter date or file no.)
+                            </Label>
+                            <Input
+                              required
+                              value={draft.referral_reference}
+                              onChange={(e) =>
+                                setDraft({ ...draft, referral_reference: e.target.value })
+                              }
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
+
+                  <div className="flex items-center gap-3 pt-2">
+                    {step > 0 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="rounded-none"
+                        onClick={() => setStep((n) => n - 1)}
+                      >
+                        Back
+                      </Button>
+                    )}
+                    {step < BOOK_STEPS.length - 1 ? (
+                      <Button
+                        type="button"
+                        className="ml-auto rounded-none"
+                        onClick={() => {
+                          if (step === 0 && !draft.title.trim()) {
+                            toast.error("A title is required.");
+                            return;
+                          }
+                          if (step === 1 && !draft.synopsis.trim()) {
+                            toast.error("A synopsis is required.");
+                            return;
+                          }
+                          setStep((n) => n + 1);
+                        }}
+                      >
+                        Continue
+                      </Button>
+                    ) : (
+                      <Button disabled={saving} type="submit" className="ml-auto gap-2 rounded-none">
+                        {saving && <Loader2 className="h-4 w-4 animate-spin" />} Submit for review
+                      </Button>
+                    )}
                   </div>
-                  <div className="space-y-1.5">
-                    <Label className="eyebrow text-muted-foreground">Synopsis</Label>
-                    <Textarea
-                      rows={5}
-                      required
-                      value={draft.synopsis}
-                      onChange={(e) => setDraft({ ...draft, synopsis: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="eyebrow text-muted-foreground">Rights & editions note</Label>
-                    <Textarea
-                      rows={3}
-                      value={draft.rights_notes}
-                      onChange={(e) => setDraft({ ...draft, rights_notes: e.target.value })}
-                    />
-                  </div>
-                  <Button disabled={saving} type="submit" className="gap-2 rounded-none">
-                    {saving && <Loader2 className="h-4 w-4 animate-spin" />} Submit for review
-                  </Button>
                 </div>
               </form>
             )}
@@ -258,6 +373,13 @@ function AccountPage() {
                     </div>
                     <Badge className={`rounded-none ${statusTone(r.status)}`}>{statusLabel(r.status)}</Badge>
                   </div>
+                  <p className="eyebrow mt-2 text-muted-foreground">
+                    {r.solicitation === "unsolicited"
+                      ? "Unsolicited submission"
+                      : `${r.solicitation === "solicited" ? "Solicited" : "Referred"}${
+                          r.referral_name ? ` — ${r.referral_name}` : ""
+                        }`}
+                  </p>
                   {r.synopsis && (
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{r.synopsis}</p>
                   )}
