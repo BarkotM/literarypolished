@@ -22,7 +22,10 @@ export type Database = {
           genre: string | null
           id: string
           language: string | null
+          referral_name: string | null
+          referral_reference: string | null
           rights_notes: string | null
+          solicitation: string
           status: Database["public"]["Enums"]["request_status"]
           synopsis: string | null
           title: string
@@ -36,7 +39,10 @@ export type Database = {
           genre?: string | null
           id?: string
           language?: string | null
+          referral_name?: string | null
+          referral_reference?: string | null
           rights_notes?: string | null
+          solicitation?: string
           status?: Database["public"]["Enums"]["request_status"]
           synopsis?: string | null
           title: string
@@ -50,7 +56,10 @@ export type Database = {
           genre?: string | null
           id?: string
           language?: string | null
+          referral_name?: string | null
+          referral_reference?: string | null
           rights_notes?: string | null
+          solicitation?: string
           status?: Database["public"]["Enums"]["request_status"]
           synopsis?: string | null
           title?: string
@@ -71,7 +80,9 @@ export type Database = {
           decision_note: string | null
           id: string
           message: string | null
+          rights_sought: string | null
           status: Database["public"]["Enums"]["request_status"]
+          territory: string | null
           updated_at: string
         }
         Insert: {
@@ -85,7 +96,9 @@ export type Database = {
           decision_note?: string | null
           id?: string
           message?: string | null
+          rights_sought?: string | null
           status?: Database["public"]["Enums"]["request_status"]
+          territory?: string | null
           updated_at?: string
         }
         Update: {
@@ -99,7 +112,9 @@ export type Database = {
           decision_note?: string | null
           id?: string
           message?: string | null
+          rights_sought?: string | null
           status?: Database["public"]["Enums"]["request_status"]
+          territory?: string | null
           updated_at?: string
         }
         Relationships: []
