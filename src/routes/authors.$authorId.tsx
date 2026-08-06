@@ -101,6 +101,25 @@ function AuthorPage() {
                   {author.amharicName}
                 </div>
               )}
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <span className="eyebrow text-muted-foreground">Books by this author:</span>
+                {author.books.map((b) => (
+                  <Link
+                    key={b.id}
+                    to="/books/$bookId"
+                    params={{ bookId: b.id }}
+                    className="eyebrow inline-flex items-center gap-1.5 border border-neutral-200 px-3 py-1.5 transition-colors hover:border-primary hover:text-primary"
+                  >
+                    <BookOpen className="h-3.5 w-3.5" /> {b.title}
+                  </Link>
+                ))}
+                <a
+                  href="#bibliography"
+                  className="eyebrow text-primary underline underline-offset-4"
+                >
+                  All {author.books.length} titles
+                </a>
+              </div>
               <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
                 {author.tagline}
               </p>
@@ -174,7 +193,7 @@ function AuthorPage() {
       </section>
 
       {/* Bibliography */}
-      <section className="mx-auto max-w-[1240px] px-5 py-16">
+      <section id="bibliography" className="mx-auto max-w-[1240px] px-5 py-16">
         <div className="flex flex-wrap items-end justify-between gap-4 border-b border-neutral-200 pb-4">
           <h2 className="font-display text-3xl">Complete bibliography</h2>
           <div className="flex flex-wrap gap-2">

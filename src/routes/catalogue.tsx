@@ -6,6 +6,7 @@ import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { allBooks, genreMatches, genres } from "@/data/catalog";
+import { AlphabetIndex } from "@/components/stepper";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/catalogue")({
@@ -32,6 +33,7 @@ export const Route = createFileRoute("/catalogue")({
 function Catalogue() {
   const [query, setQuery] = useState("");
   const [genre, setGenre] = useState("All");
+  const [letter, setLetter] = useState<string | null>(null);
   const q = query.trim().toLowerCase();
 
   const books = useMemo(
@@ -39,13 +41,19 @@ function Catalogue() {
       allBooks.filter(
         (b) =>
           genreMatches(genre, b.genre) &&
+          (!letter || b.title.trim()[0]!.toUpperCase() === letter) &&
           (!q ||
             b.title.toLowerCase().includes(q) ||
             (b.originalTitle ?? "").toLowerCase().includes(q) ||
             b.genre.toLowerCase().includes(q) ||
             b.author.name.toLowerCase().includes(q)),
       ),
-    [q, genre],
+    [q, genre, letter],
+  );
+
+  const letters = useMemo(
+    () => new Set(allBooks.map((b) => b.title.trim()[0]!.toUpperCase())),
+    [],
   );
 
   return (
@@ -94,6 +102,11 @@ function Catalogue() {
             <span className="eyebrow ml-auto text-muted-foreground">
               {books.length} title{books.length === 1 ? "" : "s"}
             </span>
+          </div>
+
+          <div id="a-z" className="mt-6 border-t border-neutral-200 pt-5">
+            <div className="eyebrow mb-3 text-muted-foreground">A–Z index by title</div>
+            <AlphabetIndex letters={letters} active={letter} onSelect={setLetter} />
           </div>
         </div>
       </section>
