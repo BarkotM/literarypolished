@@ -11,6 +11,7 @@ export type Book = {
   badge: string;
   originalLanguage: string;
   translations: string[];
+  rights: { sold: string[]; held: string[]; negotiating: string[]; open: string[] };
   availability: string;
   pages: number;
   archiveId: string;
@@ -81,6 +82,7 @@ export const authors: Author[] = [
         badge: "Archival Translation",
         originalLanguage: "German (via English)",
         translations: ["Amharic"],
+        rights: { sold: ["Amharic (Ethiopia)"], held: ["World English", "German"], negotiating: ["Tigrinya", "Italian"], open: ["French", "Arabic", "Audio", "Film & TV"] },
         availability: "In print — TSEHAI Publishers",
         pages: 218,
         archiveId: "TSEHAI-TRN-2019-004",
@@ -148,6 +150,7 @@ export const authors: Author[] = [
         badge: "Illustrated Field Study",
         originalLanguage: "English",
         translations: [],
+        rights: { sold: ["North American English"], held: ["World English", "Digital"], negotiating: ["French", "Italian"], open: ["Amharic", "German", "Audio", "Documentary"] },
         availability: "In print — TSEHAI Publishers",
         pages: 296,
         archiveId: "TSEHAI-ART-2021-002",
@@ -213,6 +216,7 @@ export const authors: Author[] = [
         badge: "Reference Standard",
         originalLanguage: "English",
         translations: [],
+        rights: { sold: ["Institutional digital (North America)"], held: ["World English", "Digital archive"], negotiating: ["Arabic"], open: ["Amharic", "French", "Somali", "Audio"] },
         availability: "In print — TSEHAI Publishers",
         pages: 512,
         archiveId: "TSEHAI-REF-2020-001",
@@ -275,6 +279,7 @@ export const authors: Author[] = [
         badge: "Course Adopted",
         originalLanguage: "English",
         translations: [],
+        rights: { sold: ["North American English", "UK & Commonwealth"], held: ["World English"], negotiating: ["Amharic", "Swahili"], open: ["French", "Portuguese", "Arabic", "Audio"] },
         availability: "In print — TSEHAI Publishers",
         pages: 344,
         archiveId: "TSEHAI-HIS-2022-003",
@@ -293,6 +298,77 @@ export const authors: Author[] = [
         praise: [
           { quote: "Comparative history done without flattening either side of the comparison.", source: "Journal of African History" },
           { quote: "The clearest account yet of how Adwa became an idea.", source: "Northeast African Studies" },
+        ],
+      },
+    ],
+  },
+  {
+    id: "abiy-ahmed",
+    name: "Abiy Ahmed",
+    amharicName: "ዐቢይ አሕመድ",
+    lifespan: "b. 1976",
+    born: 1976,
+    origin: "Beshasha, Oromia, Ethiopia",
+    languages: ["Afaan Oromo", "Amharic", "English"],
+    tagline:
+      "Prime Minister of Ethiopia and Nobel Peace Prize laureate, author of the political philosophy of Medemer.",
+    bio: [
+      "Abiy Ahmed Ali is an Ethiopian politician who became Prime Minister in 2018 and was awarded the Nobel Peace Prize in 2019. Before entering national office he served in the military and in public administration, and completed doctoral study on conflict resolution — a background that shapes the argument of his writing.",
+      "Medemer, published in Amharic, Afaan Oromo and Tigrinya editions, sets out an Ethiopian-centred political idea: that reform should synthesise rather than replace, adding what works to what already exists instead of importing whole ideologies that were designed elsewhere.",
+      "The Afaan Oromo edition, Ida'amuu, carries the argument into one of Ethiopia's largest reading publics, and is catalogued here as a primary document of contemporary Ethiopian political thought.",
+      "TSEHAI holds the bibliographic record for the international editions and their translation history.",
+    ],
+    qa: [
+      {
+        q: "What does Medemer mean?",
+        a: "It is an Amharic word for adding together — synthesis. It argues that Ethiopian renewal comes from combining what our institutions already do well with what we can learn, rather than discarding one for the other.",
+      },
+      {
+        q: "Why publish in Afaan Oromo?",
+        a: "A political idea that cannot be read in the languages people actually think in is not a political idea, it is a slogan.",
+      },
+      {
+        q: "Who is the book written for?",
+        a: "For citizens, not for specialists. The argument is deliberately made in ordinary language.",
+      },
+    ],
+    books: [
+      {
+        id: "medemer-oromo",
+        title: "Medemer [Oromo]",
+        subtitle: "The Afaan Oromo edition of Medemer",
+        originalTitle: "Ida'amuu",
+        year: 2019,
+        era: "1990–Present",
+        genre: "History / Political Thought",
+        badge: "Primary Document",
+        originalLanguage: "Amharic",
+        translations: ["Afaan Oromo", "Tigrinya"],
+        rights: {
+          sold: ["Afaan Oromo", "Tigrinya", "Amharic"],
+          held: ["World English", "Digital"],
+          negotiating: ["French", "Arabic"],
+          open: ["Swahili", "Portuguese", "Audio", "Documentary"],
+        },
+        availability: "In print — TSEHAI Publishers",
+        pages: 286,
+        archiveId: "978-1-59-907202-9",
+        publicationDate: "15 November 2019, Los Angeles",
+        classifications: ["Political Thought", "Ethiopian Studies", "Contemporary History", "Afaan Oromo"],
+        description:
+          "Medemer is the first book by Nobel Peace Prize laureate and Prime Minister of Ethiopia Abiy Ahmed since he came to office in 2018. The book advocates a fresh, Ethiopian-centric approach to the country's politics, arguing that half a century of imported ideologies failed because they were alien to Ethiopian problems and realities. This Afaan Oromo edition, Ida'amuu, brings the argument to Oromo readers in their own language.",
+        excerptTitle: "From the opening chapter",
+        excerpt:
+          "Addition is not surrender. To add is to keep what has held us together and to bring to it what we have learned since. A country that only subtracts will eventually have nothing left to govern.",
+        excerptOriginal: "Ida'amuun of'kennuu miti. Ida'amuun waan nu walitti qabe eeggachuudha.",
+        retailers: [
+          { label: "TSEHAI Store", note: "Paperback — $25.05" },
+          { label: "Local Bookstores", note: "Order by ISBN" },
+          { label: "Digital Archival Copy", note: "Reading-room access" },
+        ],
+        praise: [
+          { quote: "A primary document of the Ethiopian reform period, and the first to be argued in Afaan Oromo.", source: "Addis Review" },
+          { quote: "Whatever one makes of the politics, the publishing decision matters.", source: "Journal of Ethiopian Studies" },
         ],
       },
     ],
