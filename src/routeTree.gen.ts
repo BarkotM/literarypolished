@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TeamRouteImport } from './routes/team'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RightsRouteImport } from './routes/rights'
+import { Route as GuidelinesRouteImport } from './routes/guidelines'
 import { Route as CatalogueRouteImport } from './routes/catalogue'
 import { Route as AgentRouteImport } from './routes/agent'
 import { Route as AccountRouteImport } from './routes/account'
@@ -34,6 +35,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const RightsRoute = RightsRouteImport.update({
   id: '/rights',
   path: '/rights',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuidelinesRoute = GuidelinesRouteImport.update({
+  id: '/guidelines',
+  path: '/guidelines',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CatalogueRoute = CatalogueRouteImport.update({
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/account': typeof AccountRoute
   '/agent': typeof AgentRoute
   '/catalogue': typeof CatalogueRoute
+  '/guidelines': typeof GuidelinesRoute
   '/rights': typeof RightsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByTo {
   '/account': typeof AccountRoute
   '/agent': typeof AgentRoute
   '/catalogue': typeof CatalogueRoute
+  '/guidelines': typeof GuidelinesRoute
   '/rights': typeof RightsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRoute
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   '/account': typeof AccountRoute
   '/agent': typeof AgentRoute
   '/catalogue': typeof CatalogueRoute
+  '/guidelines': typeof GuidelinesRoute
   '/rights': typeof RightsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/agent'
     | '/catalogue'
+    | '/guidelines'
     | '/rights'
     | '/sitemap.xml'
     | '/team'
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/agent'
     | '/catalogue'
+    | '/guidelines'
     | '/rights'
     | '/sitemap.xml'
     | '/team'
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/agent'
     | '/catalogue'
+    | '/guidelines'
     | '/rights'
     | '/sitemap.xml'
     | '/team'
@@ -164,6 +176,7 @@ export interface RootRouteChildren {
   AccountRoute: typeof AccountRoute
   AgentRoute: typeof AgentRoute
   CatalogueRoute: typeof CatalogueRoute
+  GuidelinesRoute: typeof GuidelinesRoute
   RightsRoute: typeof RightsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TeamRoute: typeof TeamRoute
@@ -194,6 +207,13 @@ declare module '@tanstack/react-router' {
       path: '/rights'
       fullPath: '/rights'
       preLoaderRoute: typeof RightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guidelines': {
+      id: '/guidelines'
+      path: '/guidelines'
+      fullPath: '/guidelines'
+      preLoaderRoute: typeof GuidelinesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/catalogue': {
@@ -260,6 +280,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccountRoute: AccountRoute,
   AgentRoute: AgentRoute,
   CatalogueRoute: CatalogueRoute,
+  GuidelinesRoute: GuidelinesRoute,
   RightsRoute: RightsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TeamRoute: TeamRoute,
@@ -271,13 +292,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

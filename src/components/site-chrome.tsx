@@ -63,7 +63,7 @@ function AccountArea() {
         <DropdownMenuContent align="end" className="w-56 rounded-none">
           <DropdownMenuLabel className="eyebrow text-muted-foreground">
             {profile.kind === "agent"
-              ? "Publishing agent"
+              ? "Literary agent"
               : profile.kind === "rights_manager"
                 ? "Rights manager"
                 : "Author account"}
@@ -94,12 +94,7 @@ export function SiteHeader() {
           <span className="eyebrow hidden text-muted-foreground sm:block">Bibliographic Portal</span>
         </Link>
         <nav className="hidden items-center gap-7 md:flex">
-          <a
-            href="/#authors"
-            className="eyebrow text-muted-foreground transition-colors hover:text-primary"
-          >
-            Authors A–Z
-          </a>
+          <AuthorsMenu />
           <CatalogueMenu />
           <Link
             to="/team"
@@ -111,6 +106,87 @@ export function SiteHeader() {
         <AccountArea />
       </div>
     </header>
+  );
+}
+
+function useHover() {
+  const [open, setOpen] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const show = () => {
+    if (timer.current) clearTimeout(timer.current);
+    setOpen(true);
+  };
+  const hide = () => {
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => setOpen(false), 220);
+  };
+  return { open, setOpen, show, hide };
+}
+
+function AuthorsMenu() {
+  const { open, setOpen, show, hide } = useHover();
+  const [q, setQ] = useState("");
+
+  const results = useMemo(() => {
+    const s = q.trim().toLowerCase();
+    const list = s
+      ? authors.filter(
+          (a) => a.name.toLowerCase().includes(s) || a.languages.join(" ").toLowerCase().includes(s),
+        )
+      : authors;
+    return [...list].sort((a, b) => a.name.localeCompare(b.name)).slice(0, 8);
+  }, [q]);
+
+  return (
+    <div className="relative" onMouseEnter={show} onMouseLeave={hide}>
+      <a
+        href="/#authors"
+        className="eyebrow flex items-center gap-1 text-muted-foreground transition-colors hover:text-primary"
+      >
+        Authors A–Z <ChevronDown className="h-3 w-3" />
+      </a>
+      {open && (
+        <div className="absolute top-full left-1/2 z-50 w-[26rem] -translate-x-1/2 pt-4">
+          <div className="border border-neutral-200 bg-white p-4 shadow-xl">
+            <div className="relative">
+              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="Search authors by name or language"
+                className="h-11 rounded-none pl-9"
+              />
+            </div>
+            <div className="mt-3 max-h-72 overflow-y-auto">
+              {results.length === 0 && (
+                <p className="px-1 py-3 text-sm text-muted-foreground">No authors match.</p>
+              )}
+              {results.map((a) => (
+                <Link
+                  key={a.id}
+                  to="/authors/$authorId"
+                  params={{ authorId: a.id }}
+                  onClick={() => setOpen(false)}
+                  className="block border-b border-neutral-100 py-2 last:border-0 hover:text-primary"
+                >
+                  <div className="font-display text-sm">{a.name}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {a.lifespan} · {a.books.length} title{a.books.length === 1 ? "" : "s"}
+                  </div>
+                </Link>
+              ))}
+            </div>
+            <a
+              href="/#a-z"
+              onClick={() => setOpen(false)}
+              className="eyebrow mt-3 block border-t border-neutral-200 pt-3 text-primary"
+            >
+              Browse the full A–Z index
+            </a>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -185,14 +261,14 @@ function CatalogueMenu() {
                     </Link>
                   </li>
                   <li>
-                    <a href="/#authors" className="hover:text-primary">
-                      Authors A–Z
+                    <a href="/catalogue#a-z" className="hover:text-primary">
+                      Jump to the A–Z shelf index
                     </a>
                   </li>
                   <li>
-                    <a href="/#guidelines" className="hover:text-primary">
+                    <Link to="/guidelines" onClick={() => setOpen(false)} className="hover:text-primary">
                       Submission guidelines
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               )}
@@ -218,7 +294,7 @@ export function SiteFooter() {
           </div>
           {[
             ["The Portal", ["Authors A–Z", "Complete catalogue", "Archival collections", "Languages"]],
-            ["For Writers", ["Author entrance", "Submission guidelines", "Estate representation", "Rights & permissions"]],
+            ["For Writers", ["Author entrance", "Estate representation", "Rights & permissions"]],
             ["Institutions", ["Library access", "Course adoption", "Digital archive", "Contact"]],
           ].map(([title, items]) => (
             <div key={title as string}>
@@ -233,7 +309,12 @@ export function SiteFooter() {
             </div>
           ))}
         </div>
-        <div className="mt-12 flex flex-col gap-2 border-t pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-10 border-t border-neutral-200 pt-6">
+          <Link to="/guidelines" className="eyebrow text-primary underline underline-offset-4">
+            Submission guidelines &amp; parameters
+          </Link>
+        </div>
+        <div className="mt-6 flex flex-col gap-2 border-t pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <span>© {new Date().getFullYear()} TSEHAI Publishers. All rights reserved.</span>
           <span className="eyebrow">Master Bibliographic &amp; Author Portal</span>
         </div>
