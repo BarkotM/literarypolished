@@ -57,12 +57,12 @@ export function GetStarted() {
             className="group bg-white p-6 text-left transition-colors hover:bg-paper"
           >
             <Briefcase className="h-5 w-5" />
-            <div className="mt-4 font-display text-xl font-bold">I am a publishing agent</div>
+            <div className="mt-4 font-display text-xl font-bold">I am a literary agent</div>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               Register your agency and request to work with individual titles in the catalogue.
             </p>
             <span className="eyebrow mt-5 inline-flex items-center gap-1.5">
-              Agent entrance <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+              Literary agent entrance <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
             </span>
           </button>
         </div>
