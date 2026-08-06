@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
+import { Stepper } from "@/components/stepper";
 
 type Collab = {
   id: string;
@@ -23,6 +24,8 @@ type Collab = {
   decision_note: string | null;
   contact_email: string | null;
   contact_phone: string | null;
+  territory: string | null;
+  rights_sought: string | null;
 };
 
 export const Route = createFileRoute("/agent")({
@@ -49,6 +52,10 @@ function AgentPage() {
   const [form, setForm] = useState<Record<string, string>>({});
   const [rows, setRows] = useState<Collab[]>([]);
   const [message, setMessage] = useState<Record<string, string>>({});
+  const [openBook, setOpenBook] = useState<string | null>(null);
+  const [step, setStep] = useState(0);
+  const [terms, setTerms] = useState({ territory: "", rights_sought: "" });
+  const REQUEST_STEPS = ["Title", "Terms", "Message"];
 
   useEffect(() => {
     if (loading) return;
@@ -102,10 +109,15 @@ function AgentPage() {
       book_title: title,
       author_name: author,
       message: message[bookId] ?? "",
+      territory: terms.territory,
+      rights_sought: terms.rights_sought,
     });
     if (error) toast.error(error.message);
     else {
       toast.success("Request sent to the rights manager");
+      setOpenBook(null);
+      setStep(0);
+      setTerms({ territory: "", rights_sought: "" });
       await load();
     }
   }
@@ -186,21 +198,98 @@ function AgentPage() {
                     </p>
                     {requested.has(b.id) ? (
                       <p className="mt-4 text-sm text-muted-foreground">Already in your basket.</p>
+                    ) : openBook !== b.id ? (
+                      <Button
+                        size="sm"
+                        className="mt-4 rounded-none"
+                        onClick={() => {
+                          setOpenBook(b.id);
+                          setStep(0);
+                        }}
+                      >
+                        Request to work with this title
+                      </Button>
                     ) : (
-                      <div className="mt-4 space-y-3">
-                        <Textarea
-                          rows={2}
-                          placeholder="Note to the rights manager (territories, intended use)…"
-                          value={message[b.id] ?? ""}
-                          onChange={(e) => setMessage((m) => ({ ...m, [b.id]: e.target.value }))}
-                        />
-                        <Button
-                          size="sm"
-                          className="rounded-none"
-                          onClick={() => void request(b.id, b.title, b.author.name)}
-                        >
-                          Request to work with this title
-                        </Button>
+                      <div className="mt-5 border-t border-neutral-200 pt-5">
+                        <Stepper steps={REQUEST_STEPS} current={step} />
+                        <div className="mt-5 space-y-4">
+                          {step === 0 && (
+                            <div className="border border-neutral-200 bg-paper p-4 text-sm">
+                              <div className="eyebrow text-muted-foreground">Requesting</div>
+                              <div className="mt-1 font-display text-lg">{b.title}</div>
+                              <p className="mt-1 text-muted-foreground">
+                                {b.author.name} · {b.year}
+                              </p>
+                              <p className="mt-3 text-xs text-muted-foreground">
+                                Open languages: {b.rights.open.join(", ") || "None"}
+                              </p>
+                            </div>
+                          )}
+                          {step === 1 && (
+                            <div className="grid gap-4 sm:grid-cols-2">
+                              <div className="space-y-1.5">
+                                <Label className="eyebrow text-muted-foreground">Territory</Label>
+                                <Input
+                                  value={terms.territory}
+                                  onChange={(e) => setTerms({ ...terms, territory: e.target.value })}
+                                  placeholder="e.g. France & Belgium"
+                                />
+                              </div>
+                              <div className="space-y-1.5">
+                                <Label className="eyebrow text-muted-foreground">Rights sought</Label>
+                                <Input
+                                  value={terms.rights_sought}
+                                  onChange={(e) =>
+                                    setTerms({ ...terms, rights_sought: e.target.value })
+                                  }
+                                  placeholder="Print, digital, audio, translation"
+                                />
+                              </div>
+                            </div>
+                          )}
+                          {step === 2 && (
+                            <Textarea
+                              rows={3}
+                              placeholder="Note to the rights manager (intended use, timeline)…"
+                              value={message[b.id] ?? ""}
+                              onChange={(e) =>
+                                setMessage((m) => ({ ...m, [b.id]: e.target.value }))
+                              }
+                            />
+                          )}
+                          <div className="flex items-center gap-3">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="rounded-none"
+                              onClick={() => (step === 0 ? setOpenBook(null) : setStep((n) => n - 1))}
+                            >
+                              {step === 0 ? "Cancel" : "Back"}
+                            </Button>
+                            {step < REQUEST_STEPS.length - 1 ? (
+                              <Button
+                                type="button"
+                                className="ml-auto rounded-none"
+                                onClick={() => {
+                                  if (step === 1 && (!terms.territory.trim() || !terms.rights_sought.trim())) {
+                                    toast.error("State a territory and the rights sought.");
+                                    return;
+                                  }
+                                  setStep((n) => n + 1);
+                                }}
+                              >
+                                Continue
+                              </Button>
+                            ) : (
+                              <Button
+                                className="ml-auto rounded-none"
+                                onClick={() => void request(b.id, b.title, b.author.name)}
+                              >
+                                Send request
+                              </Button>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     )}
                   </article>
@@ -219,6 +308,9 @@ function AgentPage() {
                   </div>
                   <Badge className={`rounded-none ${statusTone(r.status)}`}>{statusLabel(r.status)}</Badge>
                 </div>
+                <p className="eyebrow mt-2 text-muted-foreground">
+                  {[r.territory, r.rights_sought].filter(Boolean).join(" · ")}
+                </p>
                 {r.decision_note && (
                   <p className="mt-3 border-l-2 border-primary pl-3 text-sm italic">{r.decision_note}</p>
                 )}
